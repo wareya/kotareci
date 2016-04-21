@@ -7,19 +7,21 @@ namespace Lua
 {
     lua_State * LuaHUD;
     
-    bool do_hud()
-    {
-        lua_pushvalue(LuaHUD, -1);
-        lua_pcall(LuaHUD, 0, 0, 0);
-        return 0;
-    }
-
+    // script-side
     int tolua_print (lua_State * L)
     {
         std::cout << lua_tostring(L, 1) << "\n";
         return 0;
     }
 
+    // engine-side
+    bool do_hud()
+    {
+        lua_pushvalue(LuaHUD, -1);
+        lua_pcall(LuaHUD, 0, 0, 0);
+        return 0;
+    }
+    
     void scripting_init()
     {
         LuaHUD = luaL_newstate();

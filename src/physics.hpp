@@ -3,7 +3,8 @@
 
 #include <vector>
 #include "components/allcomponents.hpp"
-#include "blib.hpp" // for btime in order for delta
+#include "blib/btime.hpp" // for btime in order for delta
+#include "blib/bmath.hpp" // for maximum
 
 namespace Sys
 {

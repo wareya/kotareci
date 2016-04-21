@@ -1,24 +1,21 @@
-#include "blib.hpp"
+//#include "blib.hpp"
 #include "bengine.hpp"
 #include "physics.hpp"
 #include "maps.hpp"
 #include "rendering.hpp"
 #include "components/gamecomponents.hpp"
-#include "components/player.hpp"
 #include "input.hpp"
-#include "network.hpp"
-#include "netconst.hpp"
 #include "client/clientdata.hpp"
-#include "client/think.hpp"
-#include "client/nethandlers.hpp"
 #include "client/scripting.hpp"
 #include "client/textinput.hpp"
+#include "client/think.hpp"
+#include "rendering/camera.hpp"
 #include "physics.hpp"
-#include "serverplayer.hpp"
 #include "components/textwindow.hpp"
 #include "samples.hpp"
 
 #include <fauxmix/api.hpp>
+#include <iostream>
 
 // push systems into the mainloop
 bool sys_init()
@@ -28,8 +25,8 @@ bool sys_init()
         Maps::load_background("background.png");
         
         Sys::myinput.Init();
-        Sys::myself = nullptr;
-        Sys::did_send_playerrequest = false;
+        Sys::myself = new Sys::Player(Ent::New(), "Wareya");
+        Sys::myself->spawn(Maps::width/2, Maps::height/2);
         
         Sys::afont = new bfont(Sys::Renderer, std::string("The Strider.bmp"));
         ClientEngine::console.display = new Sys::TextWindow(Ent::New());
@@ -49,12 +46,12 @@ bool sys_init()
     Sys::tems.push_back(&Sys::FrameLimit); // bengine
     #ifndef B_DEBUG_COREFRAMES
         Sys::tems.push_back(&Sys::UpdateDelta); // physics
-        Sys::tems.push_back(&Net::think);
     #endif
     Sys::tems.push_back(&Sys::SDLEvents); // bengine
     #ifndef B_DEBUG_COREFRAMES
-        Sys::tems.push_back(&Sys::ClientThink); // client/think
+        Sys::tems.push_back(&Sys::ClientThink);
         Sys::tems.push_back(&Sys::Physics); // physics
+        Sys::tems.push_back(&Sys::UpdateCamera);
     #endif
     Sys::tems.push_back(&Sys::RenderThings); // rendering
     Sys::tems.push_back(&Lua::do_hud); // rendering
@@ -98,14 +95,6 @@ bool main_init()
     
     // sets up hud and such
     Lua::scripting_init();
-    
-    // input reading structure
-    Sys::myinput.Init();
-    
-    // load faucnet dll and assign function pointers
-    if(faucnet_init() < 0)
-        return 0;
-    Net::setup_channels();
     
     // something for the renderers! yeah!
     Sys::view_x = 0;

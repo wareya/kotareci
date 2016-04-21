@@ -1,7 +1,7 @@
 #ifndef INCLUDE_BRENDERING
 #define INCLUDE_BRENDERING
 
-#include "blib.hpp"
+#include "blib/sdlhelpers.hpp"
 
 namespace Sys
 {

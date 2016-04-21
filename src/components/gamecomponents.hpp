@@ -3,35 +3,31 @@
 
 #include "../components.hpp"
 #include "drawingcomponents.hpp"
-
-#ifdef CLIENT
 #include "../samples.hpp"
-#endif
 
 namespace Sys
 {
     // Character component
+    struct Player;
     struct Character : public Component
     {
         Character(entityid_t myEntity, double argx, double argy);
         ~Character();
+        Player * player;
         Position * position;
         Hull * hull;
         Hull * head;
         Hull * body;
-        // TODO: Separate somehow to remove "gameponents" dependency on "drawingcomponents"
-        #ifdef CLIENT
-            id gun_emitter;
-            TexturedDrawable * stand;
-            AnimatedTexturedDrawable * run;
-            RotatingTexturedDrawable * weaponsprite;
-            const char * image_stand = "sprites/stand.png";
-            const char * image_jump = "sprites/jump.png";
-            const char * image_run = "sprites/run.png";
-            const char * image_leanF = "sprites/leanF.png";
-            const char * image_leanB = "sprites/leanB.png";
-            const char * image_weapon = "sprites/gun.png";
-        #endif
+        id gun_emitter;
+        TexturedDrawable * stand;
+        AnimatedTexturedDrawable * run;
+        RotatingTexturedDrawable * weaponsprite;
+        const char * image_stand = "sprites/stand.png";
+        const char * image_jump = "sprites/jump.png";
+        const char * image_run = "sprites/run.png";
+        const char * image_leanF = "sprites/leanF.png";
+        const char * image_leanB = "sprites/leanB.png";
+        const char * image_weapon = "sprites/gun.png";
         double hspeed, vspeed;
         bool myself;
         

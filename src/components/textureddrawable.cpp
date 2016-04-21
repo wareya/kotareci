@@ -3,7 +3,7 @@
 // TODO: move Sys::Renderer and TexturePile outside of the main engine ("bengine")
 
 #include "../bengine.hpp" // TexturePile, Sys::Renderer
-#include "../blib.hpp"
+#include "../blib/sdlhelpers.hpp"
 
 namespace Sys
 {

@@ -3,7 +3,7 @@
 
 #include "../components/allcomponents.hpp"
 #include "../bengine.hpp"
-#include "../blib.hpp"
+#include "../blib/sdlhelpers.hpp"
 #include "../rendering.hpp"
 
 #endif

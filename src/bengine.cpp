@@ -1,7 +1,11 @@
 #include "bengine.hpp"
-#include "blib.hpp"
+//#include "blib.hpp"
 #include "physics.hpp"
 #include "input.hpp"
+#include "blib/sdlhelpers.hpp"
+
+#include <iostream>
+
 
 namespace Sys
 {
@@ -55,6 +59,7 @@ namespace Sys
             Time::dostart = false;
             Time::deviance = 0;
             halttime = Time::get_us();
+            Time::asked = round(Time::Frametime);
         }
         else
         {
@@ -87,6 +92,8 @@ namespace Sys
             
             // incrememt tick count
             Time::ticks = fmod(Time::ticks + 1.0, Time::Framerate);
+            // partial push
+            Time::asked = round(TimeWaitms);
         }
         // push timings to buffer
         Time::last_us = Time::simstart_us;
@@ -98,7 +105,6 @@ namespace Sys
         Time::delta = Time::delta_us / Time::scale;
         Time::sim = TimeSpent;
         Time::halt = halttime-prehalttime;
-        Time::asked = round(TimeWaitms);
         
         // Throw away old timings
         while (Time::frames.size() > 50)

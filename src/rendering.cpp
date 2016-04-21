@@ -1,4 +1,5 @@
-#include "blib.hpp"
+#include "blib/sdlhelpers.hpp"
+#include "blib/bmath.hpp"
 #include "rendering/renderers.hpp"
 #include "bengine.hpp"
 #include "components/gamecomponents.hpp"
@@ -17,15 +18,6 @@ namespace Sys
         SDL_SetRenderDrawColor( Renderer, 0, 0, 0, 255 );
         SDL_RenderFillRect( Renderer, &shape );
         
-        // Come up with center TODO: Do this elsewhere to remove file's unreasonable Character dependency
-        for(auto c : Characters.List)
-        {
-            if(c->myself)
-            {
-                view_x = floor(c->center_x())-Sys::shape.w/2;
-                view_y = floor(c->center_y())-Sys::shape.h/2;
-            }
-        }
         // Draw simple textured drawables
         Renderers::DrawBackground(view_x, view_y);
         //Renderers::DrawBoxes(view_x, view_y);

@@ -32,27 +32,6 @@ namespace Input
         for (int i = 0; i < NUMBER_INPUTS; i++)
             inputs[i] = 0;
     }
-    unsigned short PlayerInput::getInputsAsBitfield()
-    {
-        unsigned short retvalue;
-        unsigned short mask;
-        for (int i = 0; i < NUMBER_INPUTS; i++)
-        {
-            mask = 1 << i;
-            retvalue = retvalue | (inputs[i]?mask:0);
-        }
-        return retvalue;
-    }
-    // used in networking code
-    void PlayerInput::setInputsAsBitfield(unsigned short invalue)
-    {
-        unsigned short mask;
-        for (int i = 0; i < NUMBER_INPUTS; i++)
-        {
-            mask = 1 << i;
-            inputs[i] = (invalue & mask)?1:0;
-        }
-    }
     
     void ClientInput::Init() // set up default key binds
     {
@@ -69,23 +48,23 @@ namespace Input
     {
         auto mousebitmask = SDL_GetMouseState(&mx, &my);
         // put previous inputs in their place
-        myplayerinput.cycleInput();
+        state.cycleInput();
         // zero-out existing inputs
-        myplayerinput.clearInput();
+        state.clearInput();
         // check key binds and apply appropriate inputs
         for (auto bind : keybindings)
         {
             if(corestate[bind.key])
-                myplayerinput.inputs[bind.input_index] = true;
+                state.inputs[bind.input_index] = true;
         }
         // check mouse buttons and apply appropriate inputs
         for (auto bind : mousebindings)
         {
             if(mousebitmask & bind.button)
-                myplayerinput.inputs[bind.input_index] = true;
+                state.inputs[bind.input_index] = true;
         }
         // store aim direction/distance in desired angle encoding and granularity (respectively)
-        myplayerinput.aimDirection = fmod(point_direction(Sys::shape.w/2, Sys::shape.h/2, mx, my)+360.0, 360.0);
-        myplayerinput.aimDistance = point_distance(Sys::shape.w/2, Sys::shape.h/2, mx, my);
+        state.aimDirection = fmod(point_direction(Sys::shape.w/2, Sys::shape.h/2, mx, my)+360.0, 360.0);
+        state.aimDistance = point_distance(Sys::shape.w/2, Sys::shape.h/2, mx, my);
     }
 }

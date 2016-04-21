@@ -375,24 +375,20 @@ namespace Sys
                     vspeed /= delta;
                     //puts("end frame");
                     
-                    #ifdef CLIENT
-                        auto aiming_left = (rawangle >= 90 and rawangle < 270);
-                        
-                        character->weaponsprite->angle = rawangle-180*aiming_left;
-                        character->weaponsprite->flip = aiming_left;
-                        character->stand->flip = aiming_left;
-                        character->run->flip = aiming_left;
-                        
-                        auto running = (fabs(hspeed) > 1);
-                        character->stand->visible = !running;
-                        character->run->visible = running;
-                        if(running)
-                            character->run->index += hspeed/35*delta*(character->run->flip*-2+1);
-                        else
-                            character->run->index = 0;
-                    #endif
+                    auto aiming_left = (rawangle >= 90 and rawangle < 270);
                     
-                    player->input.cycleInput();
+                    character->weaponsprite->angle = rawangle-180*aiming_left;
+                    character->weaponsprite->flip = aiming_left;
+                    character->stand->flip = aiming_left;
+                    character->run->flip = aiming_left;
+                    
+                    auto running = (fabs(hspeed) > 1);
+                    character->stand->visible = !running;
+                    character->run->visible = running;
+                    if(running)
+                        character->run->index += hspeed/35*delta*(character->run->flip*-2+1);
+                    else
+                        character->run->index = 0;
                 }
             }
             return false;

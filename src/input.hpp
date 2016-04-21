@@ -19,6 +19,8 @@ namespace Input
     {
         PlayerInput();
         
+        // hard array for perf reasons
+        // we = (copy) client's own personal input every frame. template classes = no-go
         bool inputs[NUMBER_INPUTS] = { };
         bool last_inputs[NUMBER_INPUTS] = { };
         double aimDirection;
@@ -28,14 +30,12 @@ namespace Input
         unsigned short netaimdir;
         unsigned char netaimdist;
         
-        unsigned short getInputsAsBitfield();
         void cycleInput();
         void clearInput();
-        void setInputsAsBitfield(unsigned short invalue);
     };
     struct ClientInput
     {
-        PlayerInput myplayerinput;
+        PlayerInput state;
         int mx;
         int my;
         const Uint8 * corestate;

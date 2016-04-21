@@ -12,15 +12,12 @@ namespace Sys
         Player(entityid_t myEntity, const char * name);
         ~Player();
         void spawn(double x, double y);
-        Character * character;
         
+        Character * character;
         std::string name;
-        int pid;
-        int pteam;
-        int pclass;
+        bool myself;
         
         double spawntimer;
-        int physics_frames_since_input_cycle;
         
         Input::PlayerInput input;
     };

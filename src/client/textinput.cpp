@@ -1,7 +1,5 @@
 #include "textinput.hpp"
 #include "../components/textwindow.hpp"
-#include "../network.hpp"
-#include "nethandlers.hpp"
 #include "clientdata.hpp"
 
 #include <string.h>
@@ -10,36 +8,6 @@ namespace ClientEngine
 {
     Console console;
     bool consoleActive = 0;
-    
-    std::string Disconnect(std::vector<std::string> args)
-    {
-        Sys::DisconnectionPseudoCallback(nullptr); // client disconnection ignores connection parameter
-        return std::string("Disconnected.");
-    }
-    
-    std::string Connect(std::vector<std::string> args)
-    {
-        // nethandlers.cpp
-        Sys::add_processors();
-        
-        if(args.size() < 2)
-            args.push_back(std::string("127.0.0.1"));
-        if(args.size() < 3)
-            args.push_back(std::string("9180"));
-        
-        int port = atoi(args[2].data());
-        if(port <= 0)
-            port = 9180;
-        
-        // grab a port for responses from the server
-        Net::init(0);
-        
-        // connect to localhost server
-        Sys::server = new Net::Connection( args[1].data(), port );
-        Net::connections.push_back(Sys::server);
-        Sys::server->wait_for_hostname = true;
-        return std::string("Connecting.");
-    }
     
     void RunConsoleCommand(std::string command)
     {
@@ -115,10 +83,10 @@ namespace ClientEngine
         if(arglist.size() < 1)
             return;
         std::string print;
+        /* Example:
         if(strcmp(arglist[0].data(), "connect") == 0)
             print = Connect(arglist);
-        if(strcmp(arglist[0].data(), "disconnect") == 0)
-            print = Disconnect(arglist);
+        */
         console.display->append_line(print);
     }
     

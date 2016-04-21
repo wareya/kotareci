@@ -2,7 +2,6 @@
 
 
 source=(
- "src/blib.cpp"
  "src/bengine.cpp"
  "src/components.cpp"
  "src/entity.cpp"
@@ -10,9 +9,9 @@ source=(
  "src/maps.cpp"
  "src/benetnasch.cpp"
  "src/physics.cpp"
- "src/network.cpp"
- "src/channelmap.cpp"
- "src/serverplayer.cpp"
+ "src/blib/sdlhelpers.cpp"
+ "src/blib/bmath.cpp"
+ "src/blib/btime.cpp"
  "src/components/backgrounddrawable.cpp"
  "src/components/boxdrawable.cpp"
  "src/components/bullet.cpp"
@@ -22,61 +21,41 @@ source=(
  "src/components/player.cpp"
  "src/physics/characters.cpp"
  "src/physics/bullets.cpp"
- "src/physics/subroutines.cpp")
+ "src/physics/subroutines.cpp"
+ "src/bootclient.cpp"
+ "src/client/clientdata.cpp"
+ "src/client/scripting.cpp"
+ "src/client/textinput.cpp"
+ "src/client/think.cpp"
+ "src/rendering/drawbackground.cpp"
+ "src/rendering/drawboxes.cpp"
+ "src/rendering/drawbullets.cpp"
+ "src/rendering/drawcharacterdebug.cpp"
+ "src/rendering/drawrotatetextured.cpp"
+ "src/rendering/drawscreentext.cpp"
+ "src/rendering/drawtextured.cpp"
+ "src/rendering/drawanimatedtextured.cpp"
+ "src/rendering/drawspeedometer.cpp"
+ "src/rendering/drawtextwindows.cpp"
+ "src/rendering.cpp"
+ "src/components/textwindow.cpp"
+ "src/components/textureddrawable.cpp"
+ "src/components/animatedtextureddrawable.cpp"
+ "src/components/rotatingtextureddrawable.cpp"
+ "src/samples.cpp")
 
-codeset=""
+codeset=" -DCLIENT"
+mkdir -p obj
+mkdir -p obj/blib
+mkdir -p obj/physics
+mkdir -p obj/rendering
+mkdir -p obj/components
+mkdir -p obj/client
 
-if [ "$1" == "server" ] || [ "$1" == "-s" ] || [ "$2" == "server" ]; then
-    if [ "$OSTYPE" == "msys" ]; then
-        executable="server.exe"
-    else
-        executable="server.out"
-    fi
-    source+=('src/bootserver.cpp')
-    source+=('src/server/think.cpp')
-    source+=('src/server/nethandlers.cpp')
-    codeset=" -DSERVER"
-    mkdir -p srvobj
-    mkdir -p srvobj/physics
-    mkdir -p srvobj/rendering
-    mkdir -p srvobj/components
-    mkdir -p srvobj/client
-    mkdir -p srvobj/server
+if [ "$OSTYPE" == "msys" ]; then
+    executable="kotareci.exe"
 else
-    mkdir -p obj
-    mkdir -p obj/physics
-    mkdir -p obj/rendering
-    mkdir -p obj/components
-    mkdir -p obj/client
-    mkdir -p obj/server
-    if [ "$OSTYPE" == "msys" ]; then
-        executable="benetnasch.exe"
-    else
-        executable="benetnasch.out"
-    fi
-    source+=('src/bootclient.cpp')
-    source+=('src/client/clientdata.cpp')
-    source+=('src/client/think.cpp')
-    source+=('src/client/nethandlers.cpp')
-    source+=('src/client/scripting.cpp')
-    source+=('src/client/textinput.cpp')
-    source+=('src/rendering/drawbackground.cpp')
-    source+=('src/rendering/drawboxes.cpp')
-    source+=('src/rendering/drawbullets.cpp')
-    source+=('src/rendering/drawcharacterdebug.cpp')
-    source+=('src/rendering/drawrotatetextured.cpp')
-    source+=('src/rendering/drawscreentext.cpp')
-    source+=('src/rendering/drawtextured.cpp')
-    source+=('src/rendering/drawanimatedtextured.cpp')
-    source+=('src/rendering/drawspeedometer.cpp')
-    source+=('src/rendering/drawtextwindows.cpp')
-    source+=('src/rendering.cpp')
-    source+=('src/components/textwindow.cpp')
-    source+=('src/components/textureddrawable.cpp')
-    source+=('src/components/animatedtextureddrawable.cpp')
-    source+=('src/components/rotatingtextureddrawable.cpp')
-    source+=('src/samples.cpp')
-    codeset=" -DCLIENT"
+    executable="kotareci.out"
 fi
 
 if [ "$OSTYPE" == "msys" ]; then
@@ -84,7 +63,8 @@ if [ "$OSTYPE" == "msys" ]; then
     
     forceinclude="`sdl2-config --prefix`"
     sdliflags="`sdl2-config --cflags`"
-    sdllflags="`sdl2-config --static-libs` -lSDL2_image -static"
+    sdllflags="`sdl2-config --static-libs`"
+    sdllflags+=" `pkg-config SDL2_image --static --libs`"
     cflags="-std=c++11 -Wall -pedantic -Iinclude $sdliflags -I${forceinclude}/include"
     linker="-L /usr/lib -static-libstdc++ -static-libgcc $sdllflags -mconsole -mwindows"
 
@@ -118,7 +98,7 @@ else
         forceinclude="`sdl2-config --prefix`" # avoid unfortunate packing mistake
         sdliflags="`sdl2-config --cflags`"
         sdllflags="`sdl2-config --libs` -lSDL2_image"
-        cflags="-std=c++11 -Wall -pedantic -Iinclude $sdliflags -I${forceinclude}/include"
+        cflags="-fPIC -std=c++11 -Wall -pedantic -Iinclude $sdliflags -I${forceinclude}/include"
         linker="-L /usr/lib $sdllflags"
         if hash sdl2-config; then
             cat /dev/null;
@@ -147,8 +127,9 @@ if [ "$OSTYPE" == "msys" ]; then
 else
     linker+='fauxmix.so'
 fi
+#end todo
 
-cmd="g++ -fPIC $cflags"
+cmd="g++ $cflags"
 
 if [ $OSTYPE == "msys" ]; then
     console="-mconsole"

@@ -1,8 +1,9 @@
 #include "gamecomponents.hpp"
+#include "player.hpp"
 
 namespace Sys
 {
-    Character::Character(entityid_t myEntity, double argx, double argy) : Component(myEntity), hspeed(0), vspeed(0), myself(false)
+    Character::Character(entityid_t myEntity, double argx, double argy) : Component(myEntity), player(nullptr), hspeed(0), vspeed(0), myself(false)
     {
         // movement hull
         hull = new Hull(myEntity, 12, 36, 10, 12);
@@ -12,27 +13,25 @@ namespace Sys
         
         position = new Position(myEntity, argx, argy);
         
-        #ifdef CLIENT
-            stand = new TexturedDrawable(Ent::New(), argx, argy, 0, 0);
-            run = new AnimatedTexturedDrawable(stand->entityID, argx, argy, 0, 0, 4, 32, 48);
-            weaponsprite = new RotatingTexturedDrawable(stand->entityID, argx, argy, -8, 8, 0, 20, 16);
-            
-            stand->set_sprite(image_stand);
-            run->set_sprite(image_run);
-            run->visible = false;
-            weaponsprite->set_sprite(image_weapon);
-            
-            delete stand->position;
-            stand->position = position;
-            
-            delete run->position;
-            run->position = position;
-            
-            delete weaponsprite->position;
-            weaponsprite->position = position;
-            
-            gun_emitter = fauxmix_emitter_create(sample::shot);
-        #endif
+        stand = new TexturedDrawable(Ent::New(), argx, argy, 0, 0);
+        run = new AnimatedTexturedDrawable(stand->entityID, argx, argy, 0, 0, 4, 32, 48);
+        weaponsprite = new RotatingTexturedDrawable(stand->entityID, argx, argy, -8, 8, 0, 20, 16);
+        
+        stand->set_sprite(image_stand);
+        run->set_sprite(image_run);
+        run->visible = false;
+        weaponsprite->set_sprite(image_weapon);
+        
+        delete stand->position;
+        stand->position = position;
+        
+        delete run->position;
+        run->position = position;
+        
+        delete weaponsprite->position;
+        weaponsprite->position = position;
+        
+        gun_emitter = fauxmix_emitter_create(sample::shot);
         
         puts("making a character");
         
@@ -44,11 +43,10 @@ namespace Sys
         delete head;
         delete body;
         delete position;
-        #ifdef CLIENT
-            delete stand;
-            delete run;
-            delete weaponsprite;
-        #endif
+        delete stand;
+        delete run;
+        delete weaponsprite;
+        player->character = nullptr;
         Characters.remove(this);
     }
     void Character::center_on(float x, float y)

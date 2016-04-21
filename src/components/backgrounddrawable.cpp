@@ -1,7 +1,7 @@
 #include "drawingcomponents.hpp"
 
 #include "../bengine.hpp" // Sys::Renderer
-#include "../blib.hpp" // loadTexture
+#include "../blib/sdlhelpers.hpp" // loadTexture
 
 namespace Sys
 {

@@ -3,14 +3,9 @@
 
 namespace Sys
 {
-    Player::Player(entityid_t myEntity, const char * name) : Component(myEntity), name(name)
+    Player::Player(entityid_t myEntity, const char * name) : Component(myEntity), character(nullptr), name(name), myself(false)
     {
-        character = nullptr;
-        pid = 0;
-        pteam = 0; // TODO: enum
-        pclass = 0; // TODO: enum
         spawntimer = -1;
-        physics_frames_since_input_cycle = 0;
         Players.add(this);
         puts("MAKING A PLAYER");
     }
@@ -21,7 +16,8 @@ namespace Sys
     }
     void Player::spawn(double x, double y)
     {
-        character = new Character(entityID, x, y);
+        if(!character)
+            character = new Character(entityID, x, y);
     }
     Collection<Player> Players;
 }
