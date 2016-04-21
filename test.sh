@@ -63,10 +63,9 @@ if [ "$OSTYPE" == "msys" ]; then
     
     forceinclude="`sdl2-config --prefix`"
     sdliflags="`sdl2-config --cflags`"
-    sdllflags="`sdl2-config --static-libs`"
-    sdllflags+=" `pkg-config SDL2_image --static --libs`"
+    sdllflags="`sdl2-config --static-libs` -lSDL2_image"
     cflags="-std=c++11 -Wall -pedantic -Iinclude $sdliflags -I${forceinclude}/include"
-    linker="-L /usr/lib -static-libstdc++ -static-libgcc $sdllflags -mconsole -mwindows"
+    linker="-L /usr/lib -static -static-libstdc++ -static-libgcc $sdllflags -mconsole -mwindows"
 
     if hash sdl2-config; then
         cat /dev/null;
