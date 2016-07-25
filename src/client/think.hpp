@@ -3,7 +3,8 @@
 
 namespace Sys
 {
-    bool ClientThink();
+    bool ClientThinkStart();
+    bool ClientThinkEnd();
 }
 
 #endif // guard

@@ -4,6 +4,7 @@
 #include "../components.hpp"
 #include "gamecomponents.hpp"
 #include "../input.hpp"
+#include <string>
 
 namespace Sys
 {

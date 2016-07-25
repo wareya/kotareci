@@ -5,6 +5,7 @@
 #undef main
 #include <vector>
 #include <nall/map.hpp>
+#include <string>
 
 namespace Sys
 {

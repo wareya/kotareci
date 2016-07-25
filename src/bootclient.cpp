@@ -49,10 +49,11 @@ bool sys_init()
     #endif
     Sys::tems.push_back(&Sys::SDLEvents); // bengine
     #ifndef B_DEBUG_COREFRAMES
-        Sys::tems.push_back(&Sys::ClientThink);
+        Sys::tems.push_back(&Sys::ClientThinkStart);
         Sys::tems.push_back(&Sys::Physics); // physics
         Sys::tems.push_back(&Sys::UpdateCamera);
     #endif
+    Sys::tems.push_back(&Sys::ClientThinkEnd);
     Sys::tems.push_back(&Sys::RenderThings); // rendering
     Sys::tems.push_back(&Lua::do_hud); // rendering
     Sys::tems.push_back(&Sys::PresentScreen); // rendering
@@ -83,6 +84,7 @@ bool main_init()
     sample::footstep2 = fauxmix_sample_load("sounds/foot2.wav");
     sample::footstep3 = fauxmix_sample_load("sounds/foot3.wav");
     sample::shot = fauxmix_sample_load("sounds/shot.wav");
+    fauxmix_sample_volume(sample::shot, 0.35);
     
     sample::emitter_ost = fauxmix_emitter_create(sample::ost);
     fauxmix_emitter_volumes(sample::emitter_ost, 0.25, 0.25);
