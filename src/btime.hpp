@@ -14,11 +14,9 @@ namespace Time
     extern const double Frametime;
     extern double ticks;
     
-    extern std::chrono::time_point<std::chrono::high_resolution_clock> start;
-    extern std::chrono::time_point<std::chrono::high_resolution_clock> end;
     extern double scale;
-    extern double last_us, simstart_us, delta_us, delta, deviance, error, sim, halt, asked;
-    extern std::deque<double> frames;
+    
+    extern double delta;
     
     double get_us();
 }

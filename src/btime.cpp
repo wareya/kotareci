@@ -11,17 +11,15 @@ namespace Time
     #ifdef B_FRAMERATE
     const double Framerate = B_FRAMERATE;
     #else
-    const double Framerate = 250;
+    const double Framerate = 120;
     #endif
-    
-    const double Framesnum = Framerate;
-    const double Frametime = 1000/Framerate;
+    const double Frametime = 1/Framerate;
     
     std::chrono::time_point<std::chrono::high_resolution_clock> start = std::chrono::high_resolution_clock::now();
-    std::chrono::time_point<std::chrono::high_resolution_clock> end = std::chrono::high_resolution_clock::now();
+    std::chrono::time_point<std::chrono::high_resolution_clock> end;
     double scale = double(std::chrono::microseconds::period().den) / double(std::chrono::microseconds::period().num);
     
-    double last_us, simstart_us, delta_us, delta, deviance, excessdeviance, error, sim, halt, asked;
+    double delta;
     std::deque<double> frames;
     
     std::chrono::high_resolution_clock clock;

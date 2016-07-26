@@ -1,5 +1,5 @@
 #include "subroutines.hpp"
-//#include "../blib.hpp"
+#include "../blib/bmath.hpp"
 
 namespace Sys
 {
@@ -60,7 +60,7 @@ namespace Sys
 
         /* move_contact */
         // moves our character to contact with a wall chunk (sends character backwards in cases of already overlapping)
-        // returns square distance traveled
+        // returns vector traveled
         // algorithm reference image: http://i.imgur.com/f5XdLtD.png
         // TODO: make non-character-specific
         std::tuple<float, float> move_contact (Character * character, double hvec, double vvec)
@@ -93,7 +93,10 @@ namespace Sys
             {
                 x += hvec;
                 y += vvec;
-                //puts("no collision at move_contact");
+                
+                character->position->x = x - character->hull->xoffset;
+                character->position->y = y - character->hull->yoffset;
+                
                 return std::tuple<float, float>(hvec, vvec);
             }
             /* PART THREE: Figure out which things we could collide with, and which one is closest */

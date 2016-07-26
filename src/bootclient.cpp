@@ -78,7 +78,9 @@ bool main_init()
         std::cout << "Could not create an SDL renderer: " << SDL_GetError() << std::endl;
     
     fauxmix_dll_init();
-    fauxmix_init(44100, false, 1024);
+    int minsamples = 44100/Time::Framerate*2;
+    if(minsamples < 512) minsamples = 512;
+    fauxmix_init(44100, false, minsamples);
     sample::ost = fauxmix_sample_load("sounds/duty.opus");
     sample::footstep1 = fauxmix_sample_load("sounds/foot1.wav");
     sample::footstep2 = fauxmix_sample_load("sounds/foot2.wav");

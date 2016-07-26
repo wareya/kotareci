@@ -19,10 +19,10 @@ namespace Sys
                 auto &h = bullet->hspeed;
                 auto &v = bullet->vspeed;
                 
-                v += gravity;
-                
                 x += h * delta;
-                y += v * delta;
+                y += (v+gravity/2) * delta;
+                
+                v += gravity;
                 
                 // reduce remaining lifespan of bullet
                 bullet->life -= delta;

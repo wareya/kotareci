@@ -5,7 +5,7 @@ namespace Sys
 {
     namespace Physicsers
     {
-        // Time which the PREVIOUS frame took, from framelimiter call to framelimiter call.
+        // Time which the PREVIOUS frame took, from framelimiter call to framelimiter call. Is the frame time if framelimiter is running correctly
         double delta = 1/Time::Framerate;
         // read UpdateDelta
         bool delta_is_too_damn_low = false;
@@ -22,7 +22,7 @@ namespace Sys
     	if(Physicsers::delta > 0.25)
     		Physicsers::delta = 0.25;
         
-        // if windows lets us do a frame in less than 1ms something wrong happened, accumulate just to be safe (and because very low delta times also break the engine)
+        // don't do physics with low deltas; accumulate low deltas instead
         if(Physicsers::delta < 1.0/1000) 
     		//Physicsers::delta = 1.0/1000;
             Physicsers::delta_is_too_damn_low = true;
