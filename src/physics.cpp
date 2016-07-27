@@ -17,10 +17,9 @@ namespace Sys
             Physicsers::delta += Time::delta;
         else
             Physicsers::delta = Time::delta;
-            
-         // seemingly safest max delta time (4fps) because low framerates break delta time
-    	if(Physicsers::delta > 0.25)
-    		Physicsers::delta = 0.25;
+        
+    	if(Physicsers::delta > 0.1)
+    		Physicsers::delta = 0.1;
         
         // don't do physics with low deltas; accumulate low deltas instead
         if(Physicsers::delta < 1.0/1000) 

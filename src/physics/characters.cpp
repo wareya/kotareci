@@ -13,7 +13,7 @@ static const float max_gravity = 2000;
 static const float maxspeed = 300;
                     
 static const float jumpspeed = -300; // initial velocity of a jump in physics pixels per second
-static const int max_bounces = 3; // number of bounces to handle during motion
+static const int max_bounces = 10; // number of bounces to handle during motion
 static const int stepsize = 4; // size of stairs in physics pixels
 
 float baseaccel = 1000;
@@ -250,19 +250,10 @@ namespace Sys
                                 // store original y before sloping
                                 auto oy = y;
                                 // check for slopes
-                                for (int i = stepsize; i <= abs(h_auto)+stepsize; i += stepsize)
-                                {
-                                    if(!place_meeting(character, h_auto, i)) // slope down a sloped ceiling step
-                                    {
-                                        y += i;
-                                        break;
-                                    }
-                                    else if(!place_meeting(character, h_auto, -i)) // slope up a normal ground slope
-                                    {
-                                        y -= i;
-                                        break;
-                                    }
-                                }
+                                if(!place_meeting(character, crop1(h_auto), stepsize)) // slope down a sloped ceiling step
+                                    y += stepsize;
+                                else if(!place_meeting(character, crop1(h_auto), -stepsize)) // slope up a normal ground slope
+                                    y -= stepsize;
                                 // no slope; it's a wall
                                 if(oy == y)
                                 {

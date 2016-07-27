@@ -19,13 +19,17 @@ namespace Sys
                 auto &h = bullet->hspeed;
                 auto &v = bullet->vspeed;
                 
-                x += h * delta;
-                y += (v+gravity/2) * delta;
+                
+                // Only function by half a frame on the first think, because the first think happens in the same frame as firing the bullet. This prevents low framerates from having bullets "come out" further along the barrel, gameplay-wise.
+                double falsedelta = (bullet->life == 1) ? delta*0.5 : delta;
+                
+                x += h * falsedelta;
+                y += (v+gravity/2) * falsedelta;
                 
                 v += gravity;
                 
                 // reduce remaining lifespan of bullet
-                bullet->life -= delta;
+                bullet->life -= falsedelta;
                 
                 // mark bullet for death if it collided something collideable
                 if(bullet->life < 0 or line_meeting_which(bullet->lastposition->x, bullet->lastposition->y, x, y).size()>0)
