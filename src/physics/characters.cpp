@@ -168,7 +168,7 @@ namespace Sys
                     
                     // Set up force of gravity
                     float vforce = 0;
-                    if(!place_meeting(character, 0, crop1(delta*basegravity/2)) or jumping)
+                    if(!place_meeting(character, 0, 0.01) or jumping)
                         vforce = basegravity;
                     
                     /*

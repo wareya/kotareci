@@ -53,32 +53,42 @@ namespace Sys
             consecutive = 0;
             lastend = Time::get_us();
             reference_time = lastend;
-            
             Time::dostart = false;
             Time::delta = Time::Frametime / Time::scale;
         }
         else
         {
             consecutive++;
+            // Get desired timestamp for framelimiter to end on based on number of consecutive framelimited frames
             double TargetTime = reference_time + consecutive*Time::Frametime*Time::scale;
             double Now = Time::get_us();
             double WaitSeconds = (TargetTime-Now)/Time::scale;
+            // If we haven't yet missed that timestamp, wait on it. Otherwise, reset.
             if(WaitSeconds > 0)
             {
                 int delayvalue = round(WaitSeconds*1000-1);
                 if(delayvalue < 0) delayvalue = 0;
                 SDL_Delay(delayvalue);
                 while(Time::get_us() < TargetTime);
+                
                 lastend = TargetTime;
                 Time::delta = Time::Frametime;
             }
+            // we're out of sync but haven't lost a full frametime of phase, pretend it's not happening
+            else if(Now < TargetTime + Time::Frametime*Time::scale)
+            {
+                lastend = TargetTime;
+                Time::delta = Time::Frametime;
+            }
+            // we've fallen a full frame behind our framelimiter's ideal in terms of phase, reset
             else
             {
                 Time::delta = (Now-lastend) / Time::scale;
                 if(Time::delta < 0) Time::delta = 0;
+                
                 lastend = Now;
-                reference_time = Now;
                 consecutive = 0;
+                reference_time = Now;
             }
         }
         
