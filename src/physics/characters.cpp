@@ -240,9 +240,11 @@ namespace Sys
                         float mx, my;
                         // move snugly to whatever we might've hit, and store the x and y deltas from that motion
                         std::tie(mx, my) = move_contact(character, h_auto, v_auto);
+                        float travelled = sqdist(mx, my);
+                        float totravel = sqdist(h_auto, v_auto);
                         h_auto -= mx;
                         v_auto -= my;
-                        if (sqdist(mx, my)*0.99 < sqdist(h_auto, v_auto)) // we collided with something
+                        if (travelled < totravel) // we collided with something
                         {
                             // Check whether there's anything to our side
                             if(place_meeting(character, crop1(h_auto), 0))
@@ -276,9 +278,9 @@ namespace Sys
                             // only if we're walking on the ground
                             if(vspeed == 0)
                             {
-                                for (int i = stepsize; i <= abs(h_auto)+stepsize; i += stepsize)
+                                for (int i = stepsize; i <= abs(mx)+stepsize; i += stepsize)
                                 {
-                                    if(!place_meeting(character, h_auto, i) and place_meeting(character, h_auto, i+1))
+                                    if(!place_meeting(character, 0, i) and place_meeting(character, 0, i+1))
                                     {
                                         sloped = true;
                                         //puts("downslope");
