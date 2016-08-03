@@ -307,13 +307,16 @@ namespace Sys
                     auto rawangle = input.aimDirection;
                     auto dir = deg2rad(rawangle);
                     
-                    int shooting = (input.inputs[Input::SHOOT]);// and not input.last_inputs[Input::SHOOT]);
+                    int shooting = (input.inputs[Input::SHOOT] and not input.last_inputs[Input::SHOOT]);
                     if(shooting)
                     {
                         auto shotspeed = 800;
                         auto predistance = 20;
                         
-                        new Bullet(Ent::New(), character->center_x()+cos(dir)*predistance, character->center_y()-6-sin(dir)*predistance, cos(dir) * shotspeed + hspeed, -sin(dir) * shotspeed, 1);
+                        auto vx = cos(dir);
+                        auto vy = -sin(dir);
+                        for(auto i = -5; i <= 5; i++)
+                            new Bullet(Ent::New(), character->center_x()+vx*predistance + vy*i*3, character->center_y()-6+vy*predistance - vx*i*3, vx*shotspeed + hspeed, vy*shotspeed, 1);
                         #ifdef CLIENT
                             fauxmix_emitter_fire(character->gun_emitter);
                         #endif
