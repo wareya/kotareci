@@ -8,8 +8,9 @@ namespace Sys
         // movement hull
         hull = new Hull(myEntity, 12, 36, 10, 12);
         // hitboxes
-        body = new Hull(myEntity, 12, 30, 10, 18);
         head = new Hull(myEntity, 8, 8, 12, 10);
+        chest = new Hull(myEntity, 16, 12, 8, 18);
+        legs = new Hull(myEntity, 12, 18, 10, 30);
         
         position = new Position(myEntity, argx, argy);
         
@@ -41,7 +42,8 @@ namespace Sys
     {
         delete hull;
         delete head;
-        delete body;
+        delete chest;
+        delete legs;
         delete position;
         delete stand;
         delete run;
@@ -51,15 +53,15 @@ namespace Sys
     }
     void Character::center_on(float x, float y)
     {
-        position->x = x - (hull->w+hull->xoffset)/2;
-        position->y = y - (hull->h+hull->yoffset)/2;
+        position->x = x - (hull->w/2+hull->xoffset);
+        position->y = y - (hull->h/2+hull->yoffset);
     }
     float Character::center_x ()
     {
-        return position->x + (hull->w+hull->xoffset)/2;
+        return position->x + hull->w/2 + hull->xoffset;
     }
     float Character::center_y ()
     {
-        return position->y + (hull->h+hull->yoffset)/2;
+        return position->y + hull->h/2 + hull->yoffset;
     }
 }

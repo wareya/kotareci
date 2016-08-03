@@ -223,7 +223,7 @@ namespace Sys
                     // we're in the wallmask; try to get out of it if it's really easy
                     if (place_meeting(character, 0, 0))
                     {
-                        puts("woaaAAAHHHh we're in the wallmask 1!");
+                        //puts("woaaAAAHHHh we're in the wallmask 1!");
                         for (int i = 1; i < stepsize; i += 1)
                         {
                             if(!place_meeting(character, 0, -i))
@@ -307,12 +307,13 @@ namespace Sys
                     auto rawangle = input.aimDirection;
                     auto dir = deg2rad(rawangle);
                     
-                    int shooting = (input.inputs[Input::SHOOT] and not input.last_inputs[Input::SHOOT]);
+                    int shooting = (input.inputs[Input::SHOOT]);// and not input.last_inputs[Input::SHOOT]);
                     if(shooting)
                     {
                         auto shotspeed = 800;
+                        auto predistance = 20;
                         
-                        new Bullet(Ent::New(), character->center_x(), character->center_y(), cos(dir) * shotspeed + hspeed, -sin(dir) * shotspeed, 1);
+                        new Bullet(Ent::New(), character->center_x()+cos(dir)*predistance, character->center_y()-6-sin(dir)*predistance, cos(dir) * shotspeed + hspeed, -sin(dir) * shotspeed, 1);
                         #ifdef CLIENT
                             fauxmix_emitter_fire(character->gun_emitter);
                         #endif

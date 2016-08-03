@@ -1,5 +1,6 @@
 #include "subroutines.hpp"
 
+
 namespace Sys
 {
     namespace Physicsers
@@ -7,10 +8,10 @@ namespace Sys
         bool MoveBullets()
         {
             float gravity = 800*delta;
-            std::vector<Bullet *> marked_for_removal;
-            for(auto bullet : Sys::Bullets)
+            for(auto i = Bullets.begin(); i != Bullets.end();)
             {
-                // get reference to attributes of bullet for less typing
+                auto bullet = *i;
+                
                 auto &x = bullet->position->x;
                 auto &y = bullet->position->y;
                 
@@ -31,15 +32,13 @@ namespace Sys
                 // reduce remaining lifespan of bullet
                 bullet->life -= falsedelta;
                 
-                // mark bullet for death if it collided something collideable
-                if(bullet->life < 0 or line_meeting_which(bullet->lastposition->x, bullet->lastposition->y, x, y).size()>0)
-                {
-                    marked_for_removal.push_back(bullet);
-                }
+                // Move to next bullet before deleting this bullet
+                i++;
+                
+                // kill bullet if it collided something collideable
+                if(bullet->life < 0 or line_meeting(bullet->lastposition->x, bullet->lastposition->y, x, y))
+                    delete bullet;
             }
-            // kill marked bullets
-            for(auto bullet : marked_for_removal)
-                delete bullet;
             return false;
         }
     }

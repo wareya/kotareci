@@ -1,4 +1,5 @@
 #include "gamecomponents.hpp"
+#include "../quadtree.hpp"
 
 namespace Sys
 {
@@ -15,12 +16,12 @@ namespace Sys
         delete hull;
         BoxDrawables.remove(this);
     }
-    SDL_Rect * BoxDrawable::getShape(float x, float y) // offsets
+    SDL_Rect * BoxDrawable::getShape(float x, float y, int buffer) // offsets
     {
-        shape = {int(ceil(position->x+hull->xoffset-x)),
-                 int(ceil(position->y+hull->yoffset-y)),
-                 int(round(hull->w)),
-                 int(round(hull->h))};
+        shape = {int(ceil(position->x-x)),
+                 int(ceil(position->y-y)),
+                 int(round(hull->w+buffer)),
+                 int(round(hull->h+buffer))};
         return &shape;
     }
 }

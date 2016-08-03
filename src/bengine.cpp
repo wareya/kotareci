@@ -66,7 +66,7 @@ namespace Sys
             // If we haven't yet missed that timestamp, wait on it. Otherwise, reset.
             if(WaitSeconds > 0)
             {
-                int delayvalue = round(WaitSeconds*1000-1);
+                int delayvalue = floor(WaitSeconds*1000-1);
                 if(delayvalue < 0) delayvalue = 0;
                 SDL_Delay(delayvalue);
                 while(Time::get_us() < TargetTime);

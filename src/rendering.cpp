@@ -18,7 +18,7 @@ namespace Sys
         SDL_SetRenderDrawColor( Renderer, 0, 0, 0, 255 );
         SDL_RenderFillRect( Renderer, &shape );
         
-        // Draw simple textured drawables
+        // Draw simple drawables
         Renderers::DrawBackground(view_x, view_y);
         //Renderers::DrawBoxes(view_x, view_y);
         Renderers::DrawAnimatedTextured(view_x, view_y);

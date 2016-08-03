@@ -4,8 +4,10 @@
 namespace Sys
 {
     // Read components.hpp
-    Component::Component(entityid_t myEntity) : entityID(myEntity)
-    { }
+    Component::Component(entityid_t myEntity)
+    {
+        entityID = myEntity;
+    }
     Component::~Component()
     { }
 }

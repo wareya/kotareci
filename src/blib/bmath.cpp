@@ -35,32 +35,32 @@ bool line_aabb_overlap (float x1, float y1, float x2, float y2,// coordinate pai
         std::swap(x3, x4);
     if(y3 > y4)
         std::swap(y3, y4);
-	// 0 = left/top, 2 = right/bottom, 1 = center sector
-	int dot1_gauge_x = (x1 < x3) ? 0 :
-					   (x1 > x4) ? 2 :
-					   1;
-	int dot1_gauge_y = (y1 < y3) ? 0 :
-					   (y1 > y4) ? 2 :
-					   1;
-	int dot2_gauge_x = (x2 < x3) ? 0 :
-					   (x2 > x4) ? 2 :
-					   1;
-	int dot2_gauge_y = (y2 < y3) ? 0 :
-					   (y2 > y4) ? 2 :
-					   1;
-	
-	if((dot1_gauge_x == 1 and dot1_gauge_y == 1) or (dot2_gauge_x == 1 and dot2_gauge_y == 1)) // either dot is in the box
-		return true;
-	if((dot1_gauge_x == dot2_gauge_x and dot1_gauge_y == dot2_gauge_y)) // same sector
-		return false;
-	if(dot1_gauge_x == dot2_gauge_x and (dot1_gauge_x == 0 or dot1_gauge_x == 2)) // horizontal(sectorized) line bypasses box
-		return false;
-	if(dot1_gauge_y == dot2_gauge_y and (dot1_gauge_y == 0 or dot1_gauge_y == 2))
-		return false;
-	// else
-	return (line_aabb_overlap((x1+x2)/2, (y1+y2)/2, x2, y2, x3, y3, x4, y4) or
-			line_aabb_overlap(x1, y1, (x1+x2)/2, (y1+y2)/2, x3, y3, x4, y4)); // will not infinitely recurse
-	
+    // 0 = left/top, 2 = right/bottom, 1 = center sector
+    int dot1_gauge_x = (x1 < x3) ? 0 :
+                       (x1 > x4) ? 2 :
+                       1;
+    int dot1_gauge_y = (y1 < y3) ? 0 :
+                       (y1 > y4) ? 2 :
+                       1;
+    int dot2_gauge_x = (x2 < x3) ? 0 :
+                       (x2 > x4) ? 2 :
+                       1;
+    int dot2_gauge_y = (y2 < y3) ? 0 :
+                       (y2 > y4) ? 2 :
+                       1;
+    
+    if((dot1_gauge_x == 1 and dot1_gauge_y == 1) or (dot2_gauge_x == 1 and dot2_gauge_y == 1)) // either dot is in the box
+        return true;
+    if((dot1_gauge_x == dot2_gauge_x and dot1_gauge_y == dot2_gauge_y)) // same sector
+        return false;
+    if(dot1_gauge_x == dot2_gauge_x and (dot1_gauge_x == 0 or dot1_gauge_x == 2)) // horizontal(sectorized) line bypasses box
+        return false;
+    if(dot1_gauge_y == dot2_gauge_y and (dot1_gauge_y == 0 or dot1_gauge_y == 2))
+        return false;
+    // else
+    return (line_aabb_overlap((x1+x2)/2, (y1+y2)/2, x2, y2, x3, y3, x4, y4) or
+            line_aabb_overlap(x1, y1, (x1+x2)/2, (y1+y2)/2, x3, y3, x4, y4)); // will not infinitely recurse
+    
 }
 
 void HSBtoRGB( float hue, float saturation, float brightness, int rgb[3] )

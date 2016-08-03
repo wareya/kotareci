@@ -13,6 +13,8 @@ namespace Sys
         bool place_meeting (Character * character, float x, float y);
         /* place_meeting_which -- returns which wallchunks a Character overlaps */
         std::vector<BoxDrawable*> place_meeting_which (float x1, float y1, float x2, float y2);
+        
+        bool line_meeting (float x1, float y1, float x2, float y2);
         /* place_meeting_which -- returns which wallchunks a given line segment overlaps */
         std::vector<BoxDrawable*> line_meeting_which (float x1, float y1, float x2, float y2);
 

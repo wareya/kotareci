@@ -17,7 +17,8 @@ namespace Sys
         Position * position;
         Hull * hull;
         Hull * head;
-        Hull * body;
+        Hull * chest;
+        Hull * legs;
         id gun_emitter;
         TexturedDrawable * stand;
         AnimatedTexturedDrawable * run;
@@ -32,8 +33,8 @@ namespace Sys
         bool myself;
         
         void center_on(float x, float y);
-        float center_x ();
-        float center_y ();
+        float center_x();
+        float center_y();
     };
     extern Collection<Character> Characters;
     
@@ -57,9 +58,8 @@ namespace Sys
         ~BoxDrawable();
         Position * position;
         Hull * hull;
-        double xoffset, yoffset;
         
-        SDL_Rect* getShape(float x, float y);
+        SDL_Rect* getShape(float x, float y, int buffer);
         
         private:
             SDL_Rect shape;

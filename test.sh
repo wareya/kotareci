@@ -9,6 +9,7 @@ source=(
  "src/maps.cpp"
  "src/benetnasch.cpp"
  "src/physics.cpp"
+ "src/quadtree.cpp"
  "src/btime.cpp"
  "src/blib/sdlhelpers.cpp"
  "src/blib/bmath.cpp"
@@ -64,7 +65,7 @@ if [ "$OSTYPE" == "msys" ]; then
     forceinclude="`sdl2-config --prefix`"
     sdliflags="`sdl2-config --cflags`"
     sdllflags="`sdl2-config --static-libs` -lSDL2_image"
-    cflags="-std=c++11 -Wall -pedantic -Iinclude $sdliflags -I${forceinclude}/include"
+    cflags="-std=c++14 -Wall -pedantic -Iinclude $sdliflags -I${forceinclude}/include"
     linker="-L /usr/lib -static -static-libstdc++ -static-libgcc $sdllflags -mconsole -mwindows"
 
     if hash sdl2-config; then
@@ -91,13 +92,13 @@ else
         echo "Using pkg-config for SDL2 compiler flags."
         sdliflags="`pkg-config --cflags sdl2`"
         sdllflags="`pkg-config --libs sdl2` -lSDL2_image"
-        cflags="-std=c++11 -Wall -pedantic -Iinclude $sdliflags"
+        cflags="-std=c++14 -Wall -pedantic -Iinclude $sdliflags"
         linker="-L /usr/lib $sdllflags"
     else
         forceinclude="`sdl2-config --prefix`" # avoid unfortunate packing mistake
         sdliflags="`sdl2-config --cflags`"
         sdllflags="`sdl2-config --libs` -lSDL2_image"
-        cflags="-fPIC -std=c++11 -Wall -pedantic -Iinclude $sdliflags -I${forceinclude}/include"
+        cflags="-fPIC -std=c++14 -Wall -pedantic -Iinclude $sdliflags -I${forceinclude}/include"
         linker="-L /usr/lib $sdllflags"
         if hash sdl2-config; then
             cat /dev/null;
@@ -186,7 +187,7 @@ do
     else
         obj="`echo $i | sed 's-src/-obj/-g' | sed 's-.cpp-.o-g'`"
     fi
-    deps=($(gcc -std=c++11 -MM $i | sed -e 's/^\w*.o://' | tr '\n' ' ' | sed -e 's/\\//g' | sed 's/ \+//' | sed 's/ \+/\n/g'))
+    deps=($(gcc -std=c++14 -MM $i | sed -e 's/^\w*.o://' | tr '\n' ' ' | sed -e 's/\\//g' | sed 's/ \+//' | sed 's/ \+/\n/g'))
     for j in "${deps[@]}"
     do
         if test $j -nt $obj; then

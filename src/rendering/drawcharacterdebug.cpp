@@ -21,7 +21,8 @@ namespace Sys
                 render(c->hull);
                 SDL_SetRenderDrawColor(Sys::Renderer, 0, 127, 255, 255);
                 render(c->head);
-                render(c->body);
+                render(c->chest);
+                render(c->legs);
             };
             return false;
         }

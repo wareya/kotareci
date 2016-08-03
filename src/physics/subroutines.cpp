@@ -1,5 +1,8 @@
 #include "subroutines.hpp"
 #include "../blib/bmath.hpp"
+#include "../quadtree.hpp"
+
+#include <list>
 
 namespace Sys
 {
@@ -25,11 +28,22 @@ namespace Sys
             }
             return collided;
         }
+        std::list<BoxDrawable*> possible_collisions(float x1, float y1, float x2, float y2)
+        { 
+            std::list<BoxDrawable *> ret;
+            for(auto e : QuadTree->potentials(x1, y1, x2, y2))
+            {
+                BoxDrawable * maybe = dynamic_cast<BoxDrawable*>(e);
+                if(maybe)
+                    ret.push_back(maybe);
+            }
+            return ret;
+        }
         /* place_meeting_which -- returns which wallchunks a Character overlaps */
         std::vector<BoxDrawable*> place_meeting_which (float x1, float y1, float x2, float y2)
         {
             std::vector<BoxDrawable*> overlaps;
-            for(auto wallchunk : Sys::BoxDrawables)
+            for(auto wallchunk : possible_collisions(x1, y1, x2, y2))
             {
                 if(aabb_overlap(wallchunk->position->x                   , wallchunk->position->y                   ,
                                 wallchunk->position->x+wallchunk->hull->w, wallchunk->position->y+wallchunk->hull->h,
@@ -41,7 +55,22 @@ namespace Sys
             }
             return overlaps;
         }
-        /* place_meeting_which -- returns which wallchunks a given line segment overlaps */
+        
+        bool line_meeting (float x1, float y1, float x2, float y2)
+        {
+            for(auto wallchunk : place_meeting_which(x1, y1, x2, y2))
+            {
+                if(line_aabb_overlap(x1, y1, x2, y2,
+                                     wallchunk->position->x                   , wallchunk->position->y,
+                                     wallchunk->position->x+wallchunk->hull->w, wallchunk->position->y+wallchunk->hull->h
+                                     ))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        /* line_meeting_which -- returns which wallchunks a given line segment overlaps */
         std::vector<BoxDrawable*> line_meeting_which (float x1, float y1, float x2, float y2)
         {
             std::vector<BoxDrawable*> overlaps;

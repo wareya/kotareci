@@ -5,6 +5,7 @@
 #include <iostream> // debugging
 
 #include "components/allcomponents.hpp"
+#include "quadtree.hpp"
 
 namespace Maps
 {
@@ -33,6 +34,8 @@ namespace Maps
         width  = wallmask->w * scale;
         height = wallmask->h * scale;
         
+        Sys::QuadTree = new Sys::QuadNode(0, 0, width, height);
+        
         for (long y = 0; y < wallmask->h; ++y)
         {
             if (y%10 == 0)
@@ -43,26 +46,26 @@ namespace Maps
             {
                 //std::cout << "Column " << x << "\n";
                 SDL_GetRGB(*((unsigned char*)(wallmask->pixels)+(x + y*wallmask->w)*bpp), wallmask->format, &r, &g, &b);
-                if(r < 127)
+                if(r < 127 and rect_x == -1) // new rect
                 {
-                    if(rect_x == -1) // new rect
-                    {
-                        rect_x = x;
-                    }
+                    rect_x = x;
                 }
-                else
+                else if(r >= 127 and rect_x != -1) // horizontal end of rect
                 {
-                    if(rect_x != -1) // end of rect
-                    {
-                        new Sys::BoxDrawable(Ent::New(), scale*rect_x, scale*y, scale*(x-rect_x), scale);
-                        rect_x = -1;
-                    }
+                    new Sys::BoxDrawable(Ent::New(), scale*rect_x, scale*y, scale*(x-rect_x), scale);
+                    rect_x = -1;
                 }
             }
             if(rect_x != -1) // end of rect
             {
                 new Sys::BoxDrawable(Ent::New(), scale*rect_x, scale*y, scale*(wallmask->w-rect_x), scale);
             }
+        }
+        for(auto box : Sys::BoxDrawables)
+        {
+            auto p = box->position;
+            auto h = box->hull;
+            Sys::QuadTree->add(box, p->x, p->y, p->x+h->w, p->y+h->h);
         }
     }
 }

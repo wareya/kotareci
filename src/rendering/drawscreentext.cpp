@@ -17,10 +17,10 @@ namespace Sys
                        (std::string("FPS:    ")+std::to_string(round(1/Time::delta*10)/10)).data(),
                        Sys::afont);
             renderText(0, 13*5,
-                       (std::string("Chunks: ")+std::to_string(Sys::BoxDrawables.List.size())).data(),
+                       (std::string("Chunks: ")+std::to_string(Sys::BoxDrawables.count())).data(),
                        Sys::afont);
             renderText(0, 13*6,
-                       (std::string("Bullets:")+std::to_string(Sys::Bullets.List.size())).data(),
+                       (std::string("Bullets:")+std::to_string(Sys::Bullets.count())).data(),
                        Sys::afont);
             renderText(0, 13*8,
                        (std::string("Delta:  ")+std::to_string(Physicsers::delta)).data(),
