@@ -68,7 +68,8 @@ namespace Sys
             {
                 int delayvalue = floor(WaitSeconds*1000-1);
                 if(delayvalue < 0) delayvalue = 0;
-                SDL_Delay(delayvalue);
+                if(delayvalue)
+                    SDL_Delay(delayvalue);
                 while(Time::get_us() < TargetTime);
                 
                 lastend = TargetTime;

@@ -10,10 +10,27 @@ namespace Sys
     {
         /* place_meeting -- returns whether a Character overlaps any wallchunks */
         // TODO: make non-character-specific
+        std::list<BoxDrawable*> possible_collisions(float x1, float y1, float x2, float y2)
+        {
+            std::list<BoxDrawable *> ret;
+            for(auto e : QuadTree->potentials(x1, y1, x2, y2))
+            {
+                BoxDrawable * maybe = dynamic_cast<BoxDrawable*>(e);
+                if(maybe)
+                    ret.push_back(maybe);
+            }
+            return ret;
+        }
         bool place_meeting (Character * character, float x, float y)
         {
             bool collided = false;
-            for(auto wallchunk : Sys::BoxDrawables)
+            for(auto wallchunk
+                : possible_collisions
+                ( character->position->x + x + character->hull->xoffset,
+                  character->position->y + y + character->hull->yoffset,
+                  character->position->x + x + character->hull->xoffset + character->hull->w,
+                  character->position->y + y + character->hull->yoffset + character->hull->h
+                ))
             {
                 if(aabb_overlap(wallchunk->position->x,                      wallchunk->position->y,
                                 wallchunk->position->x + wallchunk->hull->w, wallchunk->position->y + wallchunk->hull->h,
@@ -27,17 +44,6 @@ namespace Sys
                 }
             }
             return collided;
-        }
-        std::list<BoxDrawable*> possible_collisions(float x1, float y1, float x2, float y2)
-        { 
-            std::list<BoxDrawable *> ret;
-            for(auto e : QuadTree->potentials(x1, y1, x2, y2))
-            {
-                BoxDrawable * maybe = dynamic_cast<BoxDrawable*>(e);
-                if(maybe)
-                    ret.push_back(maybe);
-            }
-            return ret;
         }
         /* place_meeting_which -- returns which wallchunks a Character overlaps */
         std::vector<BoxDrawable*> place_meeting_which (float x1, float y1, float x2, float y2)
