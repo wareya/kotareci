@@ -5,8 +5,8 @@ namespace Sys
 {
     namespace Physicsers
     {
-        // Time which the PREVIOUS frame took, from framelimiter call to framelimiter call. Is the frame time if framelimiter is running correctly
-        double delta = 1/Time::Framerate;
+        // Time which the PREVIOUS frame took. Is the target frame time if framelimiter is running correctly.
+        double delta = Time::Frametime;
         // read UpdateDelta
         bool delta_is_too_damn_low = false;
     }

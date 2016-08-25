@@ -24,7 +24,7 @@ namespace Sys
                     continue;
                 
                 //renderTexture( window->background, Sys::Renderer, window->x_onscreen, window->y_onscreen, 1, 0 );
-                renderWindowImage( window->background, window->x_onscreen, window->y_onscreen, window->width_pixels, window->height_pixels );
+                renderWindowImage( window->background.texture, window->x_onscreen, window->y_onscreen, window->width_pixels, window->height_pixels );
                 
                 unsigned height_lines = (window->height_pixels-2)/textheight;
                 unsigned number_lines = window->lines.size();
@@ -45,7 +45,7 @@ namespace Sys
                     continue;
                 
                 //renderTexture( window->background, Sys::Renderer, window->x_onscreen, window->y_onscreen, 1, 0 );
-                renderWindowImage( window->background, window->x_onscreen, window->y_onscreen, window->width_pixels, window->height_pixels );
+                renderWindowImage( window->background.texture, window->x_onscreen, window->y_onscreen, window->width_pixels, window->height_pixels );
                 
                 renderText(window->x_onscreen+2, window->y_onscreen+2, window->line.data(), Sys::afont);
             };

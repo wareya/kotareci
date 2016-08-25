@@ -7,12 +7,12 @@
 
 namespace Sys
 {
-    TexturedDrawable::TexturedDrawable(entityid_t myEntity, double argx, double argy, double argxoffset, double argyoffset ) : Component(myEntity), sprite(NULL), xoffset(argxoffset), yoffset(argyoffset)
+    TexturedDrawable::TexturedDrawable(entityid_t myEntity, double argx, double argy, double argxoffset, double argyoffset ) : Component(myEntity), xoffset(argxoffset), yoffset(argyoffset)
     {
         position = new Position(myEntity, argx, argy);
         TexturedDrawables.add(this);
     }
-    TexturedDrawable::TexturedDrawable(entityid_t myEntity, double argx, double argy, double argxoffset, double argyoffset, char noaddifdefined ) : Component(myEntity), sprite(NULL), xoffset(argxoffset), yoffset(argyoffset)
+    TexturedDrawable::TexturedDrawable(entityid_t myEntity, double argx, double argy, double argxoffset, double argyoffset, char noaddifdefined ) : Component(myEntity), xoffset(argxoffset), yoffset(argyoffset)
     {
         position = new Position(myEntity, argx, argy);
     }
@@ -24,7 +24,7 @@ namespace Sys
     }
     bool TexturedDrawable::set_sprite(const char * sarg)
     {
-        sprite = check_texture_pile(sarg);
-        return sprite != nullptr;
+        sprite = bsprite(sarg);
+        return sprite.valid();
     }
 }

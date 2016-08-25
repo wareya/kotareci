@@ -87,9 +87,9 @@ bool main_init()
     sample::shot = fauxmix_sample_load("sounds/shot.wav");
     fauxmix_sample_volume(sample::shot, 0.35);
     
-    sample::emitter_ost = fauxmix_emitter_create(sample::ost);
-    fauxmix_emitter_loop(sample::emitter_ost, true);
-    fauxmix_emitter_fire(sample::emitter_ost);
+    //sample::emitter_ost = fauxmix_emitter_create(sample::ost);
+    //fauxmix_emitter_loop(sample::emitter_ost, true);
+    //fauxmix_emitter_fire(sample::emitter_ost);
     
     // don't know if I actually use randomness anywhere
     srand(time(NULL));

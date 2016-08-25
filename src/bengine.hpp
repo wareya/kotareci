@@ -4,7 +4,6 @@
 #include <SDL2/SDL.h>
 #undef main
 #include <vector>
-#include <nall/map.hpp>
 #include <string>
 
 namespace Sys
@@ -16,9 +15,20 @@ namespace Sys
     
     extern std::vector<bool(*)()> tems; // Sys::tems
     
-    extern nall::map<std::string, SDL_Texture *> TexturePile;
-    
-    SDL_Texture * check_texture_pile(std::string);
+    struct bsprite
+    {
+        bsprite();
+        bsprite(const char * filename);
+        bsprite(const bsprite&) = delete; // delete copy constructor: class interacts with refcounter on destruction
+        bsprite(bsprite &&) = default; // force creation of move constructor 
+        bsprite& operator=(bsprite &&) = default; // force assignment to use move
+        ~bsprite();
+        bool valid();
+        SDL_Texture * texture = nullptr;
+        private:
+        int w = 0;
+        int h = 0;
+    };
     
     bool FrameLimit();
     

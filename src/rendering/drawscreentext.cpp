@@ -12,9 +12,8 @@ namespace Sys
         bool DrawScreenText(float x, float y)
         {
             TemporaryOffscreenRenderMode Gimme(Sys::Renderer);
-            
             renderText(0, 13*4,
-                       (std::string("FPS:    ")+std::to_string(round(1/Time::delta*10)/10)).data(),
+                       (std::string("FPS:    ")+std::to_string(1/Time::delta)).data(),
                        Sys::afont);
             renderText(0, 13*5,
                        (std::string("Chunks: ")+std::to_string(Sys::BoxDrawables.count())).data(),

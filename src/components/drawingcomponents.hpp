@@ -5,6 +5,7 @@
 #undef main
 
 #include "../components.hpp"
+#include "../bengine.hpp"
 #include "primitives.hpp"
 
 namespace Sys
@@ -18,7 +19,7 @@ namespace Sys
         ~TexturedDrawable();
         bool visible = true;
         Position * position;
-        SDL_Texture * sprite;
+        bsprite sprite;
         double xoffset, yoffset;
         bool flip = false;
         bool set_sprite(const char * sarg);

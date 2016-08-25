@@ -7,6 +7,7 @@ namespace Sys
     {
         bool DrawBullets(float x, float y)
         {
+            SDL_SetRenderDrawColor(Sys::Renderer, 0, 127, 255, 255);
             for(auto bullet : Sys::Bullets)
             {
                 double dx = bullet->position->x - bullet->lastposition->x;

@@ -186,8 +186,8 @@ namespace Sys
                         ry = eject_y;
                     }
                 }
-                x = rx;
-                y = ry;
+                x = rx; // Will not be used uninitialized (above loop must logically run at least once)
+                y = ry; // Will not be used uninitialized (above loop must logically run at least once)
                 
                 character->position->x = x - character->hull->xoffset;
                 character->position->y = y - character->hull->yoffset;

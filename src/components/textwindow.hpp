@@ -18,7 +18,7 @@ namespace Sys
         unsigned y_onscreen;
         bool visible;
         
-        SDL_Texture * background;
+        bsprite background = bsprite("sprites/textwindow.png");
         
         std::string line;
     };
@@ -36,7 +36,7 @@ namespace Sys
         unsigned y_onscreen;
         bool visible;
         
-        SDL_Texture * background;
+        bsprite background = bsprite("sprites/textwindow.png");
         
         std::deque<std::string> lines;
         

@@ -9,7 +9,9 @@ namespace Sys
         {
             for(auto drawable : Sys::RotatingTexturedDrawables)
             {
-                renderTexture( drawable->sprite, Sys::Renderer, drawable->position->x+drawable->xoffset-x, drawable->position->y+drawable->yoffset-y, 1, -drawable->angle, drawable->xorigin, drawable->yorigin, drawable->flip );
+                if(!drawable->visible)
+                    continue;
+                renderTexture( drawable->sprite.texture, Sys::Renderer, drawable->position->x+drawable->xoffset-x, drawable->position->y+drawable->yoffset-y, 1, -drawable->angle, drawable->xorigin, drawable->yorigin, drawable->flip );
             };
             return false;
         }

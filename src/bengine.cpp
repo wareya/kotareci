@@ -5,6 +5,7 @@
 #include "blib/bmath.hpp"
 
 #include <iostream>
+#include <unordered_map>
 
 namespace Sys
 {
@@ -20,27 +21,59 @@ namespace Sys
     // list of Sys::tems -- basically just parts of the mainloop
     std::vector<bool(*)()> tems;
     
-    // Texture storage map. Nice and simple, right?
-    // Sorry for using an obscure library.
-    nall::map<std::string, SDL_Texture *> TexturePile;
-    
+    // Cache image files loaded from disk so they can be shared without being reloaded
+    std::unordered_map<std::string, SDL_Texture *> TexturePile;
+    std::unordered_map<SDL_Texture *, int> references;
     SDL_Texture * check_texture_pile(std::string sarg)
     {
-        auto t = TexturePile.find( std::string(sarg) );
-        std::cout << "Looking for texture " << sarg;
-        if(!t.valid) // null/not found
+        auto t = TexturePile.find(sarg);
+        if(t == TexturePile.end()) // null/not found
         {
-            puts("Nonfound texture, loading");
+            puts("Missed texture cache");
             auto sprite = loadTexture( sarg, Sys::Renderer );
             if (sprite)
-                TexturePile.insert(std::string(sarg), sprite);
+                TexturePile[std::string(sarg)] = sprite;
+            references[sprite] = 1;
             return sprite;
         }
         else // already loaded
         {
-            puts("Found texture");
-            return *t.value;
+            puts("Hit texture cache");
+            references[(*t).second] += 1;
+            return (*t).second;
         }
+    }
+    
+    void abandon_texture(SDL_Texture * sprite)
+    {
+        if(references.count(sprite))
+            references[sprite]--;
+    }
+    
+    bsprite::bsprite()
+    {
+        texture = nullptr;
+    }
+    bsprite::bsprite(const char * filename)
+    {
+        texture = check_texture_pile( std::string(filename) );
+        if (texture)
+            SDL_QueryTexture( texture, NULL, NULL, &w, &h );
+    }
+    bsprite::~bsprite()
+    {
+        abandon_texture(texture);
+    }
+    bool bsprite::valid()
+    {
+        return !!texture;
+    }
+    
+    float lastdelta;
+    void UpdateDelta(float newdelta)
+    {
+        Time::delta = (newdelta+lastdelta)/2;
+        lastdelta = newdelta;
     }
     
     bool FrameLimit()
@@ -55,6 +88,7 @@ namespace Sys
             reference_time = lastend;
             Time::dostart = false;
             Time::delta = Time::Frametime / Time::scale;
+            lastdelta = Time::delta;
         }
         else
         {
@@ -73,18 +107,18 @@ namespace Sys
                 while(Time::get_us() < TargetTime);
                 
                 lastend = TargetTime;
-                Time::delta = Time::Frametime;
+                UpdateDelta(Time::Frametime);
             }
             // we're out of sync but haven't lost a full frametime of phase, pretend it's not happening
             else if(Now < TargetTime + Time::Frametime*Time::scale)
             {
                 lastend = TargetTime;
-                Time::delta = Time::Frametime;
+                UpdateDelta(Time::Frametime);
             }
             // we've fallen a full frame behind our framelimiter's ideal in terms of phase, reset
             else
             {
-                Time::delta = (Now-lastend) / Time::scale;
+                UpdateDelta((Now-lastend)/Time::scale);
                 if(Time::delta < 0) Time::delta = 0;
                 
                 lastend = Now;

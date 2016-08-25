@@ -11,7 +11,7 @@ namespace Sys
             {
                 if(!drawable->visible)
                     continue;
-                renderTexture( drawable->sprite, Sys::Renderer, drawable->position->x-x, drawable->position->y-y, 1, drawable->flip );
+                renderTexture( drawable->sprite.texture, Sys::Renderer, drawable->position->x-x, drawable->position->y-y, 1, drawable->flip );
             };
             return false;
         }

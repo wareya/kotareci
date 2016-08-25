@@ -9,7 +9,6 @@ namespace Sys
         x_onscreen = 40;
         y_onscreen = 345;
         visible = 0;
-        background = check_texture_pile("sprites/textwindow.png");
         TextBoxes.add(this);
     }
     TextBox::~TextBox()
@@ -27,7 +26,6 @@ namespace Sys
         x_onscreen = 40;
         y_onscreen = 120;
         visible = 0;
-        background = check_texture_pile("sprites/textwindow.png");
         TextWindows.add(this);
     }
     TextWindow::~TextWindow()

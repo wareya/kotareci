@@ -17,7 +17,7 @@ namespace Sys
                 while(index < 0)
                     index += drawable->length;
                 index *= drawable->width;
-                renderTexture( drawable->sprite, Sys::Renderer, drawable->position->x-x, drawable->position->y-y, drawable->width, drawable->height, index, drawable->flip );
+                renderTexture( drawable->sprite.texture, Sys::Renderer, drawable->position->x-x, drawable->position->y-y, drawable->width, drawable->height, index, drawable->flip );
             };
             return false;
         }
