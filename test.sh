@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# To compile:
+# ./test.sh
+# To clean (from repository root):
+# rm -r obj/
+# Re-linking is always done, so there's no need to delete the resultant .exe/.dll file.
 
 source=(
  "src/bengine.cpp"
@@ -59,66 +64,89 @@ else
     executable="kotareci.out"
 fi
 
-if [ "$OSTYPE" == "msys" ]; then
-    echo "Platform seems to be windows. Report this bug if this is not the case."
-    
-    forceinclude="`sdl2-config --prefix`"
-    sdliflags="`sdl2-config --cflags`"
-    sdllflags="`sdl2-config --static-libs` -lSDL2_image"
-    cflags="-std=c++14 -Wall -pedantic -Iinclude $sdliflags -I${forceinclude}/include"
-    linker="-L /usr/lib -static -static-libstdc++ -static-libgcc $sdllflags -mconsole -mwindows"
-
-    if hash sdl2-config; then
-        cat /dev/null;
+if [ ! -f dependencies/sdl2-lib/libSDL2.a ]; then
+    echo "Compiling SDL2 ..."
+    echo "------------------"
+    mkdir -p dependencies/sdl2-src/build
+    cd dependencies/sdl2-src/build
+    ../configure
+    make
+    cp build/.libs/libSDL2.a ../../sdl2-lib/
+    if [ "$OSTYPE" == "msys" ]; then
+        cp build/.libs/libSDL2.dll.a ../../sdl2-lib/
+        cp build/.libs/SDL2.dll ../../sdl2-bin/
     else
-        echo "Could not find sdl2-config. Is SDL2 installed correctly? Aborting."
+        echo "TODO: Don't know what the filename difference is between static and shared SDL on linux."
+    fi
+    cp sdl2-config ../../sdl2-bin/
+    cp include/* ../../sdl2-include/SDL2/
+    cd ../
+    mkdir -p ../sdl2-include/SDL2
+    cp include/* ../sdl2-include/SDL2/
+    cd ../../
+    
+    if [ ! -f dependencies/sdl2-lib/libSDL2.a ]; then
+        echo "Failed to compile sdl2. Exiting."
         exit 1
     fi
 
+    echo "------------------"
+    echo "Done"
     echo ""
-    echo "Checking sdl2-config --prefix: ${forceinclude}"
-    if [ ! -f "${forceinclude}/lib/libSDL2.a" ]; then
-        echo "sdl2-config prefix does not seem to be valid: edit sdl2-config."
-        echo "Aborting."
+fi
+sdl_linker="-static -Ldependencies/sdl2-lib $(dependencies/sdl2-bin/sdl2-config --static-libs | sed 's:-L/usr/local/lib :: ; s:-lSDL2main::')"
+
+if [ ! -f dependencies/lua-lib/liblua.a ]; then
+    echo "Compiling Lua ..."
+    echo "-----------------"
+    mkdir -p dependencies/lua-src
+    cd dependencies/lua-src
+    if [ "$OSTYPE" == "msys" ]; then luaplatform="mingw"
+    else luaplatform="${luaplatform,,}"
+    fi
+    echo "Compiling for $luaplatform"
+    
+    mv src/build/*.o src/
+    make $luaplatform
+    cd src
+    mv *.o build;   mv *.a build
+    if [ "$OSTYPE" == "msys" ]; then mv *.exe build/; mv *.dll build/
+    else mv lua build/; mv *.so build/
+    fi
+    cd build
+    cp *.a ../../../lua-lib/
+    if [ "$OSTYPE" == "msys" ]; then
+        cp *.exe ../../../lua-bin/
+        cp *.dll ../../../lua-bin/
+    else
+        cp lua ../../../lua-bin/
+        cp *.so ../../../lua-bin/
+    fi
+    
+    cd ../../../../
+    
+    if [ ! -f dependencies/lua-lib/liblua.a ]; then
+        echo "Failed to compile lua. If this is a platform mis-detection issue (the current logic is just basically lowercase uname), please submit a pull request. Exiting."
         exit 1
     fi
-    echo "Looks okay."
-    echo "Also, if you get an 'XCClinker' error, remove that flag from sdl2_config."
-    echo ""
-else
-    echo "Platform seems to be linux. If not, $OSTYPE is wrong."
     
-    if hash pkg-config 2>/dev/null; then # prefer pkg-config to sdl2-config
-        echo "Using pkg-config for SDL2 compiler flags."
-        sdliflags="`pkg-config --cflags sdl2`"
-        sdllflags="`pkg-config --libs sdl2` -lSDL2_image"
-        cflags="-std=c++14 -Wall -pedantic -Iinclude $sdliflags"
-        linker="-L /usr/lib $sdllflags"
-    else
-        forceinclude="`sdl2-config --prefix`" # avoid unfortunate packing mistake
-        sdliflags="`sdl2-config --cflags`"
-        sdllflags="`sdl2-config --libs` -lSDL2_image"
-        cflags="-fPIC -std=c++14 -Wall -pedantic -Iinclude $sdliflags -I${forceinclude}/include"
-        linker="-L /usr/lib $sdllflags"
-        if hash sdl2-config; then
-            cat /dev/null;
-        else
-            echo "Could not find sdl2-config. Is SDL2 installed correctly? Aborting."
-            exit 1
-        fi
-        
-        echo ""
-        echo "Checking sdl2-config --prefix: ${forceinclude}"
-        if [ ! -f "${forceinclude}/lib/libSDL2.so" ]; then
-            echo "sdl2-config prefix does not seem to be valid: edit sdl2-config."
-            echo "Aborting."
-            exit 1
-        fi
-        echo "Looks okay."
-    fi
+    echo "-----------------"
+    echo "Done"
+    echo ""
 fi
 
-cflags+="$codeset"
+if [ "$OSTYPE" == "msys" ]; then
+    echo "Platform seems to be windows-like.  If not, $OSTYPE is wrong: it's reporting 'msys'."
+    os_cflags=""
+    os_linker="-static -static-libstdc++ -static-libgcc -mconsole"
+else
+    echo "Platform seems to be unix-like. If not, report this bug. (we currently only test for msys)"
+    os_cflags="-fPIC"
+    os_linker=""
+fi
+
+cflags="$os_cflags -std=c++14 -Wall -pedantic -Iinclude -Idependencies/sdl2-include $codeset"
+linker="$os_linker $sdl_linker"
 
 #TODO: DETECT
 linker+=' -llua -Wl,-R. -L. '
