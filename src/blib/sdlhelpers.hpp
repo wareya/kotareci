@@ -3,7 +3,6 @@
 
 #include <SDL2/SDL.h>
 #undef main
-#include <SDL2/SDL_image.h>
 #include <string>
 #include <list>
 
@@ -36,7 +35,7 @@ struct bfont // struct containing data for a fixed width font
 	char last = 127; // highest valid character
 	char defaultchar = ' '; // default character when outside of valid range
 	SDL_Renderer * renderer;
-	bfont(SDL_Renderer *renderer, const std::string &file);
+	bfont(SDL_Renderer * renderer, const char * fname);
 	std::list<void*> warnifalivewhenkilled;
 	~bfont();
 	SDL_Rect src;

@@ -2,11 +2,14 @@
 
 #include <SDL2/SDL.h>
 #undef main
-#include <SDL2/SDL_image.h>
+
+#define STBI_ONLY_PNG
+#define STBI_ONLY_BMP
+#include <stb_image.h>
 
 #include <iostream> // debugging
 
-void renderTextureInternal( SDL_Texture *tex, SDL_Renderer *renderer, int x, int y, int w, int h, bool flipx )
+void renderTextureInternal( SDL_Texture * tex, SDL_Renderer * renderer, int x, int y, int w, int h, bool flipx )
 {
 	//Setup the destination rectangle to be at the position we want
 	SDL_Rect dst;
@@ -16,7 +19,7 @@ void renderTextureInternal( SDL_Texture *tex, SDL_Renderer *renderer, int x, int
 	dst.h = h;
 	SDL_RenderCopyEx( renderer, tex, NULL, &dst, 0, NULL, flipx?SDL_FLIP_HORIZONTAL:SDL_FLIP_NONE );
 }
-void renderTextureInternalEX( SDL_Texture *tex, SDL_Renderer *renderer, int x, int y, int w, int h, int sx, int sy, int sw, int sh )
+void renderTextureInternalEX( SDL_Texture * tex, SDL_Renderer * renderer, int x, int y, int w, int h, int sx, int sy, int sw, int sh )
 {
 	//Setup the destination rectangle to be at the position we want
 	SDL_Rect dst;
@@ -31,7 +34,7 @@ void renderTextureInternalEX( SDL_Texture *tex, SDL_Renderer *renderer, int x, i
 	src.h = sh;
 	SDL_RenderCopyEx( renderer, tex, &src, &dst, 0, NULL, SDL_FLIP_NONE );
 }
-void renderTextureInternalEX2( SDL_Texture *tex, SDL_Renderer *renderer, int x, int y, int w, int h, int sx, int sy, int sw, int sh, bool flipx )
+void renderTextureInternalEX2( SDL_Texture * tex, SDL_Renderer * renderer, int x, int y, int w, int h, int sx, int sy, int sw, int sh, bool flipx )
 {
 	//Setup the destination rectangle to be at the position we want
 	SDL_Rect dst;
@@ -47,7 +50,7 @@ void renderTextureInternalEX2( SDL_Texture *tex, SDL_Renderer *renderer, int x, 
 	SDL_RenderCopyEx( renderer, tex, &src, &dst, 0, NULL, flipx?SDL_FLIP_HORIZONTAL:SDL_FLIP_NONE );
 }
 
-void renderTextureAngledInternal( SDL_Texture *tex, SDL_Renderer *renderer, int x, int y, int w, int h, double angle, double xorigin, double yorigin, bool flipx )
+void renderTextureAngledInternal( SDL_Texture * tex, SDL_Renderer * renderer, int x, int y, int w, int h, double angle, double xorigin, double yorigin, bool flipx )
 {
 	//Setup the destination rectangle to be at the position we want
 	SDL_Rect dst;
@@ -61,7 +64,7 @@ void renderTextureAngledInternal( SDL_Texture *tex, SDL_Renderer *renderer, int 
 	SDL_RenderCopyEx( renderer, tex, NULL, &dst, angle, &origin, flipx?SDL_FLIP_HORIZONTAL:SDL_FLIP_NONE );
 }
 // scaled and flippable
-void renderTexture( SDL_Texture *tex, SDL_Renderer *renderer, int x, int y, double scale, bool flipx )
+void renderTexture( SDL_Texture * tex, SDL_Renderer * renderer, int x, int y, double scale, bool flipx )
 {
 	int w, h;
 	SDL_QueryTexture( tex, NULL, NULL, &w, &h );
@@ -70,14 +73,14 @@ void renderTexture( SDL_Texture *tex, SDL_Renderer *renderer, int x, int y, doub
 	renderTextureInternal( tex, renderer, x, y, w, h, flipx );
 }
 // simple
-void renderTexture( SDL_Texture *tex, SDL_Renderer *renderer, int x, int y )
+void renderTexture( SDL_Texture * tex, SDL_Renderer * renderer, int x, int y )
 {
 	int w, h;
 	SDL_QueryTexture( tex, NULL, NULL, &w, &h );
 	renderTextureInternal( tex, renderer, x, y, w, h, false );
 }
 // stretched
-void renderTexture( SDL_Texture *tex, SDL_Renderer *renderer, int x, int y, int width, int height, bool _unused )
+void renderTexture( SDL_Texture * tex, SDL_Renderer * renderer, int x, int y, int width, int height, bool _unused )
 {
     _unused = 0;
     int w, h;
@@ -90,12 +93,12 @@ void renderTexture( SDL_Texture *tex, SDL_Renderer *renderer, int x, int y, int 
 	renderTextureInternalEX( tex, renderer, x, y, width, height, 0, 0, w, h );
 }
 // cut
-void renderTexture( SDL_Texture *tex, SDL_Renderer *renderer, int x, int y, int width, int height, int skipx, bool flipx )
+void renderTexture( SDL_Texture * tex, SDL_Renderer * renderer, int x, int y, int width, int height, int skipx, bool flipx )
 {
     renderTextureInternalEX2( tex, renderer, x, y, width, height, skipx, 0, width, height, flipx );
 }
 // rotated
-void renderTexture( SDL_Texture *tex, SDL_Renderer *renderer, int x, int y, double scale, double angle, double xorigin, double yorigin, bool flip )
+void renderTexture( SDL_Texture * tex, SDL_Renderer * renderer, int x, int y, double scale, double angle, double xorigin, double yorigin, bool flip )
 {
 	int w, h;
 	SDL_QueryTexture( tex, NULL, NULL, &w, &h );
@@ -104,20 +107,24 @@ void renderTexture( SDL_Texture *tex, SDL_Renderer *renderer, int x, int y, doub
 	renderTextureAngledInternal( tex, renderer, x, y, w, h, angle, flip?w-xorigin:xorigin, yorigin, flip ); 
 }
 
-SDL_Texture *loadTexture( const std::string &file, SDL_Renderer *renderer )
+SDL_Texture *loadTexture( SDL_Renderer* renderer, const char * fname )
 {
-	SDL_Texture *texture = IMG_LoadTexture( renderer, file.c_str() );
+	int x,y,n;
+	unsigned char *data = stbi_load(fname, &x, &y, &n, 3);
+	if ( data == nullptr )
+		return printf("Could not load image %s (file error): %s\n", fname, stbi_failure_reason()), nullptr;
+	SDL_Texture *texture = SDL_CreateTexture( renderer, SDL_PIXELFORMAT_RGB888, SDL_TEXTUREACCESS_STATIC, x, y );
 	if ( texture == nullptr )
-		std::cout << "Could not load image: " << SDL_GetError() << std::endl;
+		printf("Could not load image %s (SDL error): %s\n", fname, SDL_GetError());
+	else if ( SDL_UpdateTexture(texture, NULL, data, x*3 ))
+		printf("Could not load image %s (SDL error): %s\n", fname, SDL_GetError());
+	stbi_image_free(data);
 	return texture;
 }
 
-bfont::bfont(SDL_Renderer *renderer, const std::string &file) : renderer(renderer)
+bfont::bfont(SDL_Renderer* renderer, const char * fname) : renderer(renderer)
 {
-    SDL_Surface * surface = IMG_Load(file.c_str());
-    SDL_SetColorKey(surface, SDL_TRUE, 000);
-	spritesheet = SDL_CreateTextureFromSurface(renderer, surface);
-	SDL_FreeSurface(surface);
+	spritesheet = loadTexture(renderer, fname);
 }
 bfont::~bfont()
 {

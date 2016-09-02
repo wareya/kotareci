@@ -28,7 +28,7 @@ bool sys_init()
         Sys::myself = new Sys::Player(Ent::New(), "Wareya");
         Sys::myself->spawn(Maps::width/2, Maps::height/2);
         
-        Sys::afont = new bfont(Sys::Renderer, std::string("The Strider.bmp"));
+        Sys::afont = new bfont(Sys::Renderer, "The Strider.png");
         ClientEngine::console.display = new Sys::TextWindow(Ent::New());
         auto t = ClientEngine::console.display;
         t->append_line("Test t");
