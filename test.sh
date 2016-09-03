@@ -64,79 +64,17 @@ else
     executable="kotareci.out"
 fi
 
-if [ ! -f dependencies/sdl2-lib/libSDL2.a ]; then
-    echo "Compiling SDL2 ..."
-    echo "------------------"
-    mkdir -p dependencies/sdl2-src/build
-    cd dependencies/sdl2-src/build
-    ../configure
-    make
-    cp build/.libs/libSDL2.a ../../sdl2-lib/
-    if [ "$OSTYPE" == "msys" ]; then
-        cp build/.libs/libSDL2.dll.a ../../sdl2-lib/
-        cp build/.libs/SDL2.dll ../../sdl2-bin/
-    else
-        echo "TODO: Don't know what the filename difference is between static and shared SDL on linux."
-    fi
-    cp sdl2-config ../../sdl2-bin/
-    cp include/* ../../sdl2-include/SDL2/
-    cd ../
-    mkdir -p ../sdl2-include/SDL2
-    cp include/* ../sdl2-include/SDL2/
-    cd ../../
-    
-    if [ ! -f dependencies/sdl2-lib/libSDL2.a ]; then
-        echo "Failed to compile sdl2. Exiting."
-        exit 1
-    fi
+cd dependencies
+./build.sh
+cd ../
 
-    echo "------------------"
-    echo "Done"
-    echo ""
-fi
-sdl_linker="-static -Ldependencies/sdl2-lib $(dependencies/sdl2-bin/sdl2-config --static-libs | sed 's:-L/usr/local/lib :: ; s:-lSDL2main::')"
+sdl_linker="-Ldependencies/sdl2-lib $(dependencies/sdl2-bin/sdl2-config --static-libs | sed 's:-L/usr/local/lib :: ; s:-lSDL2main::')"
+lua_linker="-Ldependencies/lua-lib -llua"
+mix_linker="-Ldependencies/faucmix-lib -lfauxmix -Ldependencies/opusfile-lib -lopusfile -Ldependencies/opus-lib -lopus -Ldependencies/libogg-lib -logg"
 
-if [ ! -f dependencies/lua-lib/liblua.a ]; then
-    echo "Compiling Lua ..."
-    echo "-----------------"
-    mkdir -p dependencies/lua-src
-    cd dependencies/lua-src
-    if [ "$OSTYPE" == "msys" ]; then luaplatform="mingw"
-    else luaplatform="${luaplatform,,}"
-    fi
-    echo "Compiling for $luaplatform"
-    
-    mv src/build/*.o src/
-    make $luaplatform
-    cd src
-    mv *.o build;   mv *.a build
-    if [ "$OSTYPE" == "msys" ]; then mv *.exe build/; mv *.dll build/
-    else mv lua build/; mv *.so build/
-    fi
-    cd build
-    cp *.a ../../../lua-lib/
-    if [ "$OSTYPE" == "msys" ]; then
-        cp *.exe ../../../lua-bin/
-        cp *.dll ../../../lua-bin/
-    else
-        cp lua ../../../lua-bin/
-        cp *.so ../../../lua-bin/
-    fi
-    
-    cd ../../../../
-    
-    if [ ! -f dependencies/lua-lib/liblua.a ]; then
-        echo "Failed to compile lua. If this is a platform mis-detection issue (the current logic is just basically lowercase uname), please submit a pull request. Exiting."
-        exit 1
-    fi
-    
-    echo "-----------------"
-    echo "Done"
-    echo ""
-fi
 
 if [ "$OSTYPE" == "msys" ]; then
-    echo "Platform seems to be windows-like.  If not, $OSTYPE is wrong: it's reporting 'msys'."
+    echo "Platform seems to be windows-like. If not, \$OSTYPE is wrong: it's reporting 'msys'."
     os_cflags=""
     os_linker="-static -static-libstdc++ -static-libgcc -mconsole"
 else
@@ -146,27 +84,14 @@ else
 fi
 
 cflags="$os_cflags -std=c++14 -Wall -pedantic -Iinclude -Idependencies/sdl2-include $codeset"
-linker="$os_linker $sdl_linker"
-
-#TODO: DETECT
-linker+=' -llua -Wl,-R. -L. '
-if [ "$OSTYPE" == "msys" ]; then
-    linker+='fauxmix.dll'
-else
-    linker+='fauxmix.so'
-fi
-#end todo
+linker="-static $os_linker $sdl_linker $lua_linker $mix_linker"
 
 cmd="g++ $cflags"
 
-if [ $OSTYPE == "msys" ]; then
-    console="-mconsole"
-fi
-
 #options
-dflags="-O0 -g -ggdb $console -D B_NET_DEBUG_CONNECTION"
-ddflags="-O0 -g -ggdb $console -D B_NET_DEBUG_CONNECTION -D B_NET_DEBUG_MISTAKES"
-dddflags="-O0 -g -ggdb $console -D B_NET_DEBUG_CONNECTION -D B_NET_DEBUG_PRINTPACK"
+dflags="-O0 -g -ggdb -D B_NET_DEBUG_CONNECTION"
+ddflags="-O0 -g -ggdb -D B_NET_DEBUG_CONNECTION -D B_NET_DEBUG_MISTAKES"
+dddflags="-O0 -g -ggdb -D B_NET_DEBUG_CONNECTION -D B_NET_DEBUG_PRINTPACK"
 
 fflags='-O3'
 mflags='-O3 -msse -msse2' # modern x86 optimizations

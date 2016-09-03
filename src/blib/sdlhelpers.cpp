@@ -110,15 +110,16 @@ void renderTexture( SDL_Texture * tex, SDL_Renderer * renderer, int x, int y, do
 SDL_Texture *loadTexture( SDL_Renderer* renderer, const char * fname )
 {
 	int x,y,n;
-	unsigned char *data = stbi_load(fname, &x, &y, &n, 3);
+	unsigned char *data = stbi_load(fname, &x, &y, &n, STBI_rgb_alpha);
 	if ( data == nullptr )
 		return printf("Could not load image %s (file error): %s\n", fname, stbi_failure_reason()), nullptr;
-	SDL_Texture *texture = SDL_CreateTexture( renderer, SDL_PIXELFORMAT_RGB888, SDL_TEXTUREACCESS_STATIC, x, y );
+	SDL_Texture *texture = SDL_CreateTexture( renderer, SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_STATIC, x, y );
 	if ( texture == nullptr )
 		printf("Could not load image %s (SDL error): %s\n", fname, SDL_GetError());
-	else if ( SDL_UpdateTexture(texture, NULL, data, x*3 ))
+	else if ( SDL_UpdateTexture(texture, NULL, data, x*4 ))
 		printf("Could not load image %s (SDL error): %s\n", fname, SDL_GetError());
 	stbi_image_free(data);
+	SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
 	return texture;
 }
 

@@ -6,23 +6,23 @@
 #include <string>
 #include <list>
 
-void renderTextureInternal( SDL_Texture *tex, SDL_Renderer *renderer, int x, int y, int w, int h, bool flipx );
+void renderTextureInternal( SDL_Texture * tex, SDL_Renderer * renderer, int x, int y, int w, int h, bool flipx );
 
-void renderTextureInternalEX( SDL_Texture *tex, SDL_Renderer *renderer, int x, int y, int w, int h, int sx, int sy, int sw, int sh );
+void renderTextureInternalEX( SDL_Texture * tex, SDL_Renderer * renderer, int x, int y, int w, int h, int sx, int sy, int sw, int sh );
 
-void renderTextureAngledInternal( SDL_Texture *tex, SDL_Renderer *renderer, int x, int y, int w, int h, double angle, double xorigin, double yorigin, bool flipx );
+void renderTextureAngledInternal( SDL_Texture * tex, SDL_Renderer * renderer, int x, int y, int w, int h, double angle, double xorigin, double yorigin, bool flipx );
 // scaled and flippable
-void renderTexture( SDL_Texture *tex, SDL_Renderer *renderer, int x, int y, double scale, bool flipx );
+void renderTexture( SDL_Texture * tex, SDL_Renderer * renderer, int x, int y, double scale, bool flipx );
 // simple
-void renderTexture( SDL_Texture *tex, SDL_Renderer *renderer, int x, int y );
+void renderTexture( SDL_Texture * tex, SDL_Renderer * renderer, int x, int y );
 // stretched
-void renderTexture( SDL_Texture *tex, SDL_Renderer *renderer, int x, int y, int width, int height, bool _unused );
+void renderTexture( SDL_Texture * tex, SDL_Renderer * renderer, int x, int y, int width, int height, bool _unused );
 // cut
-void renderTexture( SDL_Texture *tex, SDL_Renderer *renderer, int x, int y, int width, int height, int skipx, bool flipx );
+void renderTexture( SDL_Texture * tex, SDL_Renderer * renderer, int x, int y, int width, int height, int skipx, bool flipx );
 // rotated
-void renderTexture( SDL_Texture *tex, SDL_Renderer *renderer, int x, int y, double scale, double angle, double xorigin, double yorigin, bool flip );
+void renderTexture( SDL_Texture * tex, SDL_Renderer * renderer, int x, int y, double scale, double angle, double xorigin, double yorigin, bool flip );
 
-SDL_Texture *loadTexture( const std::string &file, SDL_Renderer *renderer );
+SDL_Texture * loadTexture( SDL_Renderer * renderer, const char * fname );
 
 
 struct bfont // struct containing data for a fixed width font

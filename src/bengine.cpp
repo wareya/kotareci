@@ -30,7 +30,7 @@ namespace Sys
         if(t == TexturePile.end()) // null/not found
         {
             puts("Missed texture cache");
-            auto sprite = loadTexture( sarg, Sys::Renderer );
+            auto sprite = loadTexture( Sys::Renderer, sarg.data() );
             if (sprite)
                 TexturePile[std::string(sarg)] = sprite;
             references[sprite] = 1;

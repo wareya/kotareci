@@ -19,7 +19,7 @@ namespace Sys
     }
     bool BackgroundDrawable::init(const char * sarg)
     {
-        sprite = loadTexture( sarg, Sys::Renderer );
+        sprite = loadTexture( Sys::Renderer, sarg );
         return sprite != nullptr;
     }
 }

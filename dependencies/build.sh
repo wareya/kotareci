@@ -39,13 +39,16 @@ fi
 if [ ! -f lua-lib/liblua.a ]; then
     echo "Compiling Lua ..."
     echo "-----------------"
-    mkdir -p lua-src
     cd lua-src
+    mkdir -p src
     if [ "$OSTYPE" == "msys" ]; then luaplatform="mingw"
     else luaplatform="${luaplatform,,}"
     fi
     echo "Compiling for $luaplatform"
     
+    cd src
+    mkdir -p build
+    cd ../
     mv src/build/*.o src/
     make $luaplatform
     
@@ -55,7 +58,7 @@ if [ ! -f lua-lib/liblua.a ]; then
     else mv lua build/; mv *.so build/
     fi
     cd build
-    cp *.a ../../../lua-lib/
+    cp liblua.a ../../../lua-lib/
     if [ "$OSTYPE" == "msys" ]; then
         cp *.exe ../../../lua-bin/
         cp *.dll ../../../lua-bin/
@@ -191,11 +194,12 @@ if [ ! -f opusfile-lib/libopusfile.a ]; then
     
     mkdir -p build
     cd build
-    #../configure --disable-http
+    ../configure --disable-http
     make
     
     cd .libs
     cp libopusfile.a ../../../opusfile-lib/
+    cp ../opusfile.pc ../../../pkg/
     
     cd ../../../
     
@@ -203,6 +207,41 @@ if [ ! -f opusfile-lib/libopusfile.a ]; then
     
     if [ ! -f opusfile-lib/libopusfile.a ]; then
         echo "Failed to compile opusfile."
+        exit 1
+    fi
+    
+    echo "----"
+    echo "Done"
+    echo ""
+fi
+
+if [ ! -f faucmix-lib/libfauxmix.a ]; then
+    echo "Compiling mixer faucet ..."
+    echo "--------------------------"
+    
+    export PKG_CONFIG="$PWD/$pkgconfigexecutable"
+    export PKG_CONFIG_PATH="$PWD/pkg/"
+    export C_INCLUDE_PATH="$PWD/opusfile-include/"
+    export LIBRARY_PATH="$PWD/opusfile-lib/"
+    
+    export CFLAGS=" $IFLAGS $(sdl2-bin/sdl2-config --cflags | sed 's:-Dmain=SDL_main::') $($pkgconfigexecutable --cflags opusfile) -I../sdl2-include -I../opusfile-include -I../libogg-include -I../opus-include "
+    export LFLAGS=" $(sdl2-bin/sdl2-config --static-libs | sed 's:-L/usr/local/lib :: ; s:-lSDL2main ::') $($pkgconfigexecutable opusfile --static --libs | sed 's:-L/usr/local/lib ::')"
+    
+    cd faucmix-src/
+    
+    if [ "$OSTYPE" == "msys" ]; then
+        echo "start"
+        ./w64ar.sh
+        echo "end"
+        cp libfauxmix.a ../faucmix-lib/
+    else
+        echo "TODO"
+    fi
+    
+    cd ../
+    
+    if [ ! -f faucmix-lib/libfauxmix.a ]; then
+        echo "Failed to compile mixer faucet."
         exit 1
     fi
     
