@@ -68,35 +68,32 @@ cd dependencies
 ./build.sh
 cd ../
 
-sdl_linker="-Ldependencies/sdl2-lib $(dependencies/sdl2-bin/sdl2-config --static-libs | sed 's:-L/usr/local/lib :: ; s:-lSDL2main::')"
-lua_linker="-Ldependencies/lua-lib -llua"
-mix_linker="-Ldependencies/faucmix-lib -lfauxmix -Ldependencies/opusfile-lib -lopusfile -Ldependencies/opus-lib -lopus -Ldependencies/libogg-lib -logg"
+lua_linker="dependencies/lua-lib/liblua.a"
+mix_linker="dependencies/faucmix-lib/libfauxmix.a dependencies/opusfile-lib/libopusfile.a -ependencies/opus-lib/libopus.a dependencies/libogg-lib/libogg.a"
 
 
 if [ "$OSTYPE" == "msys" ]; then
     echo "Platform seems to be windows-like. If not, \$OSTYPE is wrong: it's reporting 'msys'."
     os_cflags=""
-    os_linker="-static -static-libstdc++ -static-libgcc -mconsole"
+    os_linker="--static -static-libstdc++ -static-libgcc -mconsole"
+    sdl_linker="-Ldependencies/sdl2-lib $(dependencies/sdl2-bin/sdl2-config --static-libs | sed 's:-lSDL2main::')"
 else
     echo "Platform seems to be unix-like. If not, report this bug. (we currently only test for msys)"
     os_cflags="-fPIC"
     os_linker=""
+    sdl_linker="-ldl -lpthread -lm -lrt dependencies/sdl2-lib/libSDL2.a"
 fi
 
 cflags="$os_cflags -std=c++14 -Wall -pedantic -Iinclude -Idependencies/sdl2-include $codeset"
-linker="-static $os_linker $sdl_linker $lua_linker $mix_linker"
+linker="$os_linker $sdl_linker $lua_linker $mix_linker $post_linker"
 
-cmd="g++ $cflags"
+mflags='-O3 -msse -msse2' # modern amd64 optimizations
+cmd="g++ $cflags $mflags -g -ggdb"
 
 #options
 dflags="-O0 -g -ggdb -D B_NET_DEBUG_CONNECTION"
 ddflags="-O0 -g -ggdb -D B_NET_DEBUG_CONNECTION -D B_NET_DEBUG_MISTAKES"
 dddflags="-O0 -g -ggdb -D B_NET_DEBUG_CONNECTION -D B_NET_DEBUG_PRINTPACK"
-
-fflags='-O3'
-mflags='-O3 -msse -msse2' # modern x86 optimizations
-iflags='-O3 -msse -msse2 -mssse3 -msse4.1' # aggressive intel x86 optimizations
-aflags='-O3 -msse -msse2 -msse2avx' # aggressive amd x86 optimizations
 
 tflags='-D TESTS=1'
 pflags='-O3 -D B_FRAMELIMIT_DISABLE -D B_DEBUG_FRAMESONLY -D B_DEBUG_COREFRAMES '
