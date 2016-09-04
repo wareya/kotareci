@@ -69,8 +69,8 @@ namespace Sys
         return !!texture;
     }
     
-    float lastdelta;
-    void UpdateDelta(float newdelta)
+    double lastdelta;
+    void UpdateDelta(double newdelta)
     {
         Time::delta = (newdelta+lastdelta)/2;
         lastdelta = newdelta;
@@ -103,9 +103,10 @@ namespace Sys
                 int delayvalue = floor(WaitSeconds*1000-1);
                 if(delayvalue < 0) delayvalue = 0;
                 if(delayvalue)
+                {
                     SDL_Delay(delayvalue);
-                while(Time::get_us() < TargetTime);
-                
+                    while(Time::get_us() < TargetTime);
+                }
                 lastend = TargetTime;
                 UpdateDelta(Time::Frametime);
             }

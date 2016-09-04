@@ -2,6 +2,7 @@
 
 namespace Sys
 {
+    static const int depth = 6;
     // Public domain fast power over integers
     int ipow(int base, int exp)
     {
@@ -23,7 +24,7 @@ namespace Sys
         left = x1;
         right = x2;
         
-        printf("Building quadtree of %d bottom-level nodes\n", (int)ipow(4, depth));
+        printf("Building quadtree of %d bottom-level nodes (%dx%d)\n", (int)ipow(4, depth), (int)ipow(2, depth), (int)ipow(2, depth));
         printf("(%d total nodes)\n", ((int)ipow(4, depth+1)-1)/3);
         
         allocate_nodes(depth);
@@ -66,8 +67,11 @@ namespace Sys
     }
     bool QuadNode::contact(float x1, float y1, float x2, float y2)
     {
-        if(x1 > x2) std::swap(x1, x2);
-        if(y1 > y2) std::swap(y1, y2);
+        float temp;
+    if(x1 > x2)
+    {   temp = x1; x1 = x2; x2 = temp;   }
+    if(y1 > y2)
+    {   temp = y1; y1 = y2; y2 = temp;   }
         return (x1 < right and x2 >= left and y1 < bottom and y2 >= top);
     }
     void QuadNode::add(Component * a, float x1, float y1, float x2, float y2)

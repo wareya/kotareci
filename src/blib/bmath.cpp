@@ -8,14 +8,15 @@
 bool aabb_overlap (float x1, float y1, float x2, float y2,// coordinate pair for first box
                    float x3, float y3, float x4, float y4)// second box
 {
+    float temp;
     if(x1 > x2)
-        std::swap(x1, x2);
+    {   temp = x1; x1 = x2; x2 = temp;   }
     if(y1 > y2)
-        std::swap(y1, y2);
+    {   temp = y1; y1 = y2; y2 = temp;   }
     if(x3 > x4)
-        std::swap(x3, x4);
+    {   temp = x3; x3 = x4; x4 = temp;   }
     if(y3 > y4)
-        std::swap(y3, y4);
+    {   temp = y3; y3 = y4; y4 = temp;   }
     if(x1 < x4 && y1 < y4 &&
        x3 < x2 && y3 < y2)
     {
@@ -31,10 +32,11 @@ bool aabb_overlap (float x1, float y1, float x2, float y2,// coordinate pair for
 bool line_aabb_overlap (float x1, float y1, float x2, float y2,// coordinate pair of line
                         float x3, float y3, float x4, float y4)// box
 {
+    float temp;
     if(x3 > x4)
-        std::swap(x3, x4);
+    {   temp = x3; x3 = x4; x4 = temp;   }
     if(y3 > y4)
-        std::swap(y3, y4);
+    {   temp = y3; y3 = y4; y4 = temp;   }
     // 0 = left/top, 2 = right/bottom, 1 = center sector
     int dot1_gauge_x = (x1 < x3) ? 0 :
                        (x1 > x4) ? 2 :

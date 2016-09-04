@@ -20,17 +20,13 @@ namespace Sys
                 auto &h = bullet->hspeed;
                 auto &v = bullet->vspeed;
                 
-                
-                // Only function by half a frame on the first think, because the first think happens in the same frame as firing the bullet. This prevents low framerates from having bullets "come out" further along the barrel, gameplay-wise.
-                double falsedelta = (bullet->life == 1) ? delta*0.5 : delta;
-                
-                x += h * falsedelta;
-                y += (v+gravity/2) * falsedelta;
+                x += h * delta;
+                y += (v+gravity/2) * delta;
                 
                 v += gravity;
                 
                 // reduce remaining lifespan of bullet
-                bullet->life -= falsedelta;
+                bullet->life -= delta;
                 
                 // Move to next bullet before deleting this bullet
                 i++;

@@ -10,7 +10,6 @@
 
 namespace Sys
 {
-    static const int depth = 6;
     struct QuadNode
     {
         std::array<QuadNode *, 4> * nodes;

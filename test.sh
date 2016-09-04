@@ -4,7 +4,7 @@
 # ./test.sh
 # To clean (from repository root):
 # rm -r obj/
-# Re-linking is always done, so there's no need to delete the resultant .exe/.dll file.
+# Re-linking is always done, so there's no need to delete the resultant executable.
 
 source=(
  "src/bengine.cpp"
@@ -83,53 +83,14 @@ else
     os_linker=""
 fi
 
-cflags="$os_cflags -std=c++14 -Wall -pedantic -Iinclude -Idependencies/sdl2-include $codeset"
+cflags="$os_cflags -std=c++14 -O3 -Wall -pedantic -Iinclude -Idependencies/sdl2-include $codeset"
 linker="-static $os_linker $sdl_linker $lua_linker $mix_linker"
 
-cmd="g++ $cflags"
+mflags='-O3 -msse -msse2' # modern amd64 optimizations
+iflags='-O3 -msse -msse2 -mssse3 -msse4.1' # aggressive intel amd64 optimizations
+aflags='-O3 -msse -msse2 -msse2avx' # aggressive amd amd64 optimizations
 
-#options
-dflags="-O0 -g -ggdb -D B_NET_DEBUG_CONNECTION"
-ddflags="-O0 -g -ggdb -D B_NET_DEBUG_CONNECTION -D B_NET_DEBUG_MISTAKES"
-dddflags="-O0 -g -ggdb -D B_NET_DEBUG_CONNECTION -D B_NET_DEBUG_PRINTPACK"
-
-fflags='-O3'
-mflags='-O3 -msse -msse2' # modern x86 optimizations
-iflags='-O3 -msse -msse2 -mssse3 -msse4.1' # aggressive intel x86 optimizations
-aflags='-O3 -msse -msse2 -msse2avx' # aggressive amd x86 optimizations
-
-tflags='-D TESTS=1'
-pflags='-O3 -D B_FRAMELIMIT_DISABLE -D B_DEBUG_FRAMESONLY -D B_DEBUG_COREFRAMES '
-zflags='-O3 -D B_FRAMELIMIT_DISABLE -D B_DEBUG_NORENDER '
-wflags='-O3 -D B_FRAMELIMIT_DISABLE'
-
-if [ "$1" == "-d" ]; then
-    cmd="$cmd $dflags"
-elif [ "$1" == "-dd" ]; then
-    cmd="$cmd $ddflags"
-elif [ "$1" == "-ddd" ]; then
-    cmd="$cmd $dddflags"
-elif [ "$1" == "-f" ]; then
-    cmd="$cmd $fflags"
-elif [ "$1" == "-m" ]; then
-    cmd="$cmd $mflags"
-elif [ "$1" == "-i" ]; then
-    cmd="$cmd $iflags"
-elif [ "$1" == "-a" ]; then
-    cmd="$cmd $aflags"
-elif [ "$1" == "-p" ]; then
-    cmd="$cmd $pflags"
-elif [ "$1" == "-t" ]; then
-    cmd="$cmd $tflags"
-elif [ "$1" == "-z" ]; then
-    cmd="$cmd $zflags"
-elif [ "$1" == "-w" ]; then
-    cmd="$cmd $wflags"
-elif [ "$1" == "-s" ]; then
-    cmd="$cmd ${@:2}";
-elif [ "$1" == "-c" ]; then
-    cmd="$cmd ${@:2}";
-fi
+cmd="g++ $cflags $mflags"
 
 objects=""
 
