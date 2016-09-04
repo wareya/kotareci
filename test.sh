@@ -69,7 +69,7 @@ cd dependencies
 cd ../
 
 lua_linker="dependencies/lua-lib/liblua.a"
-mix_linker="dependencies/faucmix-lib/libfauxmix.a dependencies/opusfile-lib/libopusfile.a -ependencies/opus-lib/libopus.a dependencies/libogg-lib/libogg.a"
+mix_linker="dependencies/faucmix-lib/libfauxmix.a dependencies/opusfile-lib/libopusfile.a dependencies/opus-lib/libopus.a dependencies/libogg-lib/libogg.a"
 
 
 if [ "$OSTYPE" == "msys" ]; then
