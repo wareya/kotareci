@@ -3,13 +3,17 @@
 echo "Checking and compiling dependencies."
 echo ""
 
+mkdir -p sdl2-lib/
+mkdir -p sdl2-bin/
+mkdir -p sdl2-include/
+mkdir -p sdl2-src/build
+
 if [ ! -f sdl2-lib/libSDL2.a ]; then
     echo "Compiling SDL2 ..."
     echo "------------------"
     
-    mkdir -p sdl2-src/build
     cd sdl2-src/build
-    ../configure
+    ../configure --enable-input-tslib=no --disable-shared
     make
     
     cp build/.libs/libSDL2.a ../../sdl2-lib/
@@ -36,13 +40,18 @@ if [ ! -f sdl2-lib/libSDL2.a ]; then
     echo ""
 fi
 
+mkdir -p lua-lib/
+mkdir -p lua-bin/
+
 if [ ! -f lua-lib/liblua.a ]; then
     echo "Compiling Lua ..."
     echo "-----------------"
+    
     cd lua-src
     mkdir -p src
+    uname=$(uname)
     if [ "$OSTYPE" == "msys" ]; then luaplatform="mingw"
-    else luaplatform="${luaplatform,,}"
+    else luaplatform="${uname,,}"
     fi
     echo "Compiling for $luaplatform"
     
@@ -55,17 +64,10 @@ if [ ! -f lua-lib/liblua.a ]; then
     cd src
     mv *.o build;   mv *.a build
     if [ "$OSTYPE" == "msys" ]; then mv *.exe build/; mv *.dll build/
-    else mv lua build/; mv *.so build/
+    else mv luac build/; mv lua build/; mv *.so build/
     fi
     cd build
     cp liblua.a ../../../lua-lib/
-    if [ "$OSTYPE" == "msys" ]; then
-        cp *.exe ../../../lua-bin/
-        cp *.dll ../../../lua-bin/
-    else
-        cp lua ../../../lua-bin/
-        cp *.so ../../../lua-bin/
-    fi
     
     cd ../../../
     
@@ -78,6 +80,11 @@ if [ ! -f lua-lib/liblua.a ]; then
     echo "Done"
     echo ""
 fi
+
+mkdir -p libogg-lib/
+mkdir -p libogg-bin/
+mkdir -p libogg-include/
+mkdir -p pkg/
 
 if [ ! -f libogg-lib/libogg.a ]; then
     echo "Compiling libogg ..."
@@ -96,7 +103,8 @@ if [ ! -f libogg-lib/libogg.a ]; then
         cp libogg.dll.a ../../../../libogg-lib/
         cp libogg-0.dll ../../../../libogg-bin/
     else
-        echo "TODO: Don't know what the filename difference is between static and shared libogg on linux."
+        cp libogg.la ../../../../libogg-lib/
+        cp libogg.so ../../../../libogg-bin/
     fi
     
     cd ../../../../
@@ -111,6 +119,10 @@ if [ ! -f libogg-lib/libogg.a ]; then
     echo "Done"
     echo ""
 fi
+
+mkdir -p opus-lib/
+mkdir -p opus-bin/
+mkdir -p opus-include/
 
 if [ ! -f opus-lib/libopus.a ]; then
     echo "Compiling opus ..."
@@ -129,7 +141,8 @@ if [ ! -f opus-lib/libopus.a ]; then
         cp libopus.dll.a ../../../opus-lib/
         cp libopus-0.dll ../../../opus-bin/
     else
-        echo "TODO: Don't know what the filename difference is between static and shared opus on linux."
+        cp libopus.la ../../../opus-lib/
+        cp libopus.so ../../../opus-bin/
     fi
     
     cd ../../../
@@ -152,6 +165,8 @@ else
     pkgconfigexecutable="pkg-config-bin/pkg-config"
 fi
 
+mkdir -p pkg-config-bin/
+
 if [ ! -f $pkgconfigexecutable ]; then
     echo "Compiling pkg-config ..."
     echo "------------------------"
@@ -162,17 +177,18 @@ if [ ! -f $pkgconfigexecutable ]; then
     ../configure --with-internal-glib
     make
     
-    cd .libs
     if [ "$OSTYPE" == "msys" ]; then
+        cd .libs
         cp pkg-config.exe ../../../pkg-config-bin/
+        cd ../
     else
-        cp pkg-config ../../../pkg-config-bin/
+        cp pkg-config ../../pkg-config-bin/
     fi
     
-    cd ../../../
+    cd ../../
     
     if [ ! -f $pkgconfigexecutable ]; then
-        echo "Failed to compile pkg-config. $pkg-config-executable is missing."
+        echo "Failed to compile pkg-config. $pkgconfigexecutable is missing."
         exit 1
     fi
     
@@ -180,6 +196,10 @@ if [ ! -f $pkgconfigexecutable ]; then
     echo "Done"
     echo ""
 fi
+
+mkdir -p opusfile-lib/
+mkdir -p opusfile-include/
+
 
 if [ ! -f opusfile-lib/libopusfile.a ]; then
     echo "Compiling opusfile ..."
@@ -215,6 +235,8 @@ if [ ! -f opusfile-lib/libopusfile.a ]; then
     echo ""
 fi
 
+mkdir -p faucmix-lib/
+
 if [ ! -f faucmix-lib/libfauxmix.a ]; then
     echo "Compiling mixer faucet ..."
     echo "--------------------------"
@@ -225,17 +247,15 @@ if [ ! -f faucmix-lib/libfauxmix.a ]; then
     export LIBRARY_PATH="$PWD/opusfile-lib/"
     
     export CFLAGS=" $IFLAGS $(sdl2-bin/sdl2-config --cflags | sed 's:-Dmain=SDL_main::') $($pkgconfigexecutable --cflags opusfile) -I../sdl2-include -I../opusfile-include -I../libogg-include -I../opus-include "
-    export LFLAGS=" $(sdl2-bin/sdl2-config --static-libs | sed 's:-L/usr/local/lib :: ; s:-lSDL2main ::') $($pkgconfigexecutable opusfile --static --libs | sed 's:-L/usr/local/lib ::')"
     
     cd faucmix-src/
     
     if [ "$OSTYPE" == "msys" ]; then
-        echo "start"
         ./w64ar.sh
-        echo "end"
         cp libfauxmix.a ../faucmix-lib/
     else
-        echo "TODO"
+        ./64ar.sh
+        cp libfauxmix.a ../faucmix-lib/
     fi
     
     cd ../

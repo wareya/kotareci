@@ -24,6 +24,7 @@ DLLEXPORT TYPE_VD fauxmix_dll_init()
     volume = 1.0f;
     ducker = 1.0f;
     isfloat = false;
+    SDL_Init(SDL_INIT_AUDIO);
 }
 
 DLLEXPORT TYPE_VD fauxmix_use_float_output(TYPE_BL b)
