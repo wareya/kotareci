@@ -67,7 +67,7 @@ bool main_init()
 	Sys::speeds.push_back(0);
 	
 	// initialize SDL
-    if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
+    if (SDL_Init(SDL_INIT_VIDEO) != 0)
         std::cout << "Could not initialize SDL: " << SDL_GetError() << std::endl;
     
     Sys::MainWindow = SDL_CreateWindow("Benetnasch", 300, 300, Sys::shape.w, Sys::shape.h, SDL_WINDOW_SHOWN);
