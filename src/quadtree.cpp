@@ -1,4 +1,5 @@
 #include "quadtree.hpp"
+#include <stdio.h>
 
 namespace Sys
 {

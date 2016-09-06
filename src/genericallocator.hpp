@@ -1,6 +1,7 @@
 #include <nall/set.hpp>
 
 #include <iostream>
+#include <stdio.h>
 
 template <typename T>
 struct GenericAllocator
