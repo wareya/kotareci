@@ -8,28 +8,21 @@ Permission is granted to anyone to use this software and/or its source code for
 any purpose, including commercial applications, and to alter it and distribute
 it freely, subject to the following conditions:
 
-    1. The origin of the software must not be misrepresented.
-
-    2. Modified versions of the software or its source code must not
-    be misrepresented as being the original software or source code.
-
-    3. This notice may not be removed from, or altered in, any source
+    1. This notice may not be removed from, or altered in, any source
     distribution of the software.
 
-        3a. This notice is not required to be included in any compiled
+        1a. This notice is not required to be included in any compiled
         distribution of the software, unless said distribution also
         constitutes a source distribution.
-        
-    4. In case of use or inclusion of this software in a commercial
-    product, it is required to include a proper acknowledgment of
-    this software inside or alongside the product.
-    
+
+    2. The origin of the software must not be misrepresented.
+
+    3. In cases of use or inclusion of this software in a commercial
+    product, an acknowledgement of this software inside or alongside
+    the product would be appreciated but is not required.
+
+    4. Modified versions of the software or its source code must not
+    be misrepresented as being the original software or source code.
+
     5. Non-substantial portions of the source code are explicitly
     exempt from the above restrictions.
-    
-    6. The source code of this software may alternatively be used
-    under either or both of the following licenses:
-        - The GNU GPL 3.0 or newer, which can be acquired at the
-        following web URL:  https://www.gnu.org/licenses/gpl-3.0.html
-        - The Mozilla Public License 2.0, which can be acquired at
-        the following web URL: https://www.mozilla.org/en-US/MPL/2.0/
