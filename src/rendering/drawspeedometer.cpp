@@ -2,6 +2,8 @@
 #include "commonrenderdep.hpp"
 #include "../client/clientdata.hpp"
 
+#include <string> // to_string
+
 namespace Sys
 {
     namespace Renderers

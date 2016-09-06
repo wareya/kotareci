@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 echo "Checking and compiling dependencies."
 echo ""
@@ -8,13 +8,22 @@ mkdir -p sdl2-bin/
 mkdir -p sdl2-include/
 mkdir -p sdl2-src/build
 
+if hash gmake 2>/dev/null; then
+    MAKE="gmake"
+else
+    MAKE="make"
+fi
+
 if [ ! -f sdl2-lib/libSDL2.a ]; then
     echo "Compiling SDL2 ..."
     echo "------------------"
     
-    cd sdl2-src/build
-    ../configure --enable-input-tslib=no --disable-shared
-    make
+    cd sdl2-src
+    ./fix-timestamp.sh
+    mkdir -p build
+    cd build
+    ../configure --enable-input-tslib=no --disable-shared --disable-example
+    $MAKE
     
     cp build/.libs/libSDL2.a ../../sdl2-lib/
     if [ "$OSTYPE" == "msys" ]; then
@@ -59,7 +68,7 @@ if [ ! -f lua-lib/liblua.a ]; then
     mkdir -p build
     cd ../
     mv src/build/*.o src/
-    make $luaplatform
+    $MAKE $luaplatform
     
     cd src
     mv *.o build;   mv *.a build
@@ -91,10 +100,11 @@ if [ ! -f libogg-lib/libogg.a ]; then
     echo "--------------------"
     cd libogg-src
     
+    ./fix-timestamp.sh
     mkdir -p build
     cd build
     ../configure
-    make
+    $MAKE
     
     cd src/.libs
     cp libogg.a ../../../../libogg-lib/
@@ -129,10 +139,11 @@ if [ ! -f opus-lib/libopus.a ]; then
     echo "--------------------"
     cd opus-src
     
+    ./fix-timestamp.sh
     mkdir -p build
     cd build
     ../configure
-    make
+    $MAKE
     
     cd .libs
     cp libopus.a ../../../opus-lib/
@@ -172,10 +183,14 @@ if [ ! -f $pkgconfigexecutable ]; then
     echo "------------------------"
     cd pkg-config-src
     
+    ./fix-timestamp.sh
+    cd glib
+    ./fix-timestamp.sh
+    cd ../
     mkdir -p build
     cd build
-    ../configure --with-internal-glib
-    make
+    ../configure --with-internal-glib --with-libiconv=gnu
+    $MAKE
     
     if [ "$OSTYPE" == "msys" ]; then
         cd .libs
@@ -208,14 +223,15 @@ if [ ! -f opusfile-lib/libopusfile.a ]; then
     export PKG_CONFIG="$PWD/$pkgconfigexecutable"
     export PKG_CONFIG_PATH="$PWD/pkg/"
     export C_INCLUDE_PATH="$PWD/libogg-include/:$PWD/opus-include/"
-    export LIBRARY_PATH="$PWD/libogg-lib/:$PWD/opus-lib/"
+    export LIBRARY_PATH="$PWD/libogg-lib/:$PWD/opus-lib/:"
     
     cd opusfile-src
     
+    ./fix-timestamp.sh
     mkdir -p build
     cd build
-    ../configure --disable-http
-    make
+    ../configure --disable-http --disable-shared
+    $MAKE
     
     cd .libs
     cp libopusfile.a ../../../opusfile-lib/

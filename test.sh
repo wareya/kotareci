@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # To compile:
 # ./test.sh
@@ -74,21 +74,34 @@ mix_linker="dependencies/faucmix-lib/libfauxmix.a dependencies/opusfile-lib/libo
 
 if [ "$OSTYPE" == "msys" ]; then
     echo "Platform seems to be windows-like. If not, \$OSTYPE is wrong: it's reporting 'msys'."
+    gcc="gcc"
+    gpp="g++"
     os_cflags=""
     os_linker="--static -static-libstdc++ -static-libgcc -mconsole"
     sdl_linker="-Ldependencies/sdl2-lib $(dependencies/sdl2-bin/sdl2-config --static-libs | sed 's:-lSDL2main::')"
 else
     echo "Platform seems to be unix-like. If not, report this bug. (we currently only test for msys)"
+    if hash gcc5 2>/dev/null; then
+        gcc="gcc5"
+        # extra flags needed to force FreeBSD g++5 to expose to_string
+        # freebsd also requires libstdc++ to be linked statically in order for gcc4 and gcc5 to coexist...
+        gpp="g++5 -D_GLIBCXX_USE_C99 -D_GLIBCXX_USE_C99_MATH -D_GLIBCXX_USE_C99_MATH_TR1 -static-libstdc++"
+        sdl_linker="-Ldependencies/sdl2-lib $(dependencies/sdl2-bin/sdl2-config --static-libs | sed 's:-lSDL2main::')"
+    else
+        gcc="gcc"
+        # linux sdl2 static linking requires special attention because sdl2-config provides ldl etc in the wrong order
+        gpp="g++"
+        sdl_linker="-ldl -lpthread -lm -lrt dependencies/sdl2-lib/libSDL2.a"
+    fi
     os_cflags="-fPIC"
     os_linker=""
-    sdl_linker="-ldl -lpthread -lm -lrt dependencies/sdl2-lib/libSDL2.a"
 fi
 
 cflags="$os_cflags -std=c++14 -O3 -Wall -pedantic -Iinclude -Idependencies/sdl2-include $codeset"
 linker="$os_linker $sdl_linker $lua_linker $mix_linker"
 
 mflags='-O3 -msse -msse2' # modern amd64 optimizations
-cmd="g++ $cflags $mflags"
+cmd="$gpp $cflags $mflags"
 
 objects=""
 
@@ -99,7 +112,7 @@ do
     else
         obj="`echo $i | sed 's-src/-obj/-g' | sed 's-.cpp-.o-g'`"
     fi
-    deps=($(gcc -std=c++14 -MM $i | sed -e 's/^\w*.o://' | tr '\n' ' ' | sed -e 's/\\//g' | sed 's/ \+//' | sed 's/ \+/\n/g'))
+    deps=($($gcc -std=c++14 -MM $i | sed -e 's/^\w*.o://' | tr '\n' ' ' | sed -e 's/\\//g' | sed 's/ \+//' | sed 's/ \+/\n/g'))
     for j in "${deps[@]}"
     do
         if test $j -nt $obj; then
@@ -110,7 +123,7 @@ do
     done
     objects="$objects $obj"
 done
-echo "g++ -o $executable $objects $linker"
-g++ -o $executable $objects $linker
+echo "$gpp -o $executable $objects $linker"
+$gpp -o $executable $objects $linker
 
 echo "done"
