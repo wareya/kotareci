@@ -3,11 +3,11 @@
 #include <SDL2/SDL.h>
 #undef main
 
+#include <iostream> // debugging
+
 #define STBI_ONLY_PNG
 #define STBI_ONLY_BMP
-#include <stb_image.h>
-
-#include <iostream> // debugging
+#include <stb_image_wrapper.h>
 
 void renderTextureInternal( SDL_Texture * tex, SDL_Renderer * renderer, int x, int y, int w, int h, bool flipx )
 {
@@ -66,6 +66,7 @@ void renderTextureAngledInternal( SDL_Texture * tex, SDL_Renderer * renderer, in
 // scaled and flippable
 void renderTexture( SDL_Texture * tex, SDL_Renderer * renderer, int x, int y, double scale, bool flipx )
 {
+	#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
 	int w, h;
 	SDL_QueryTexture( tex, NULL, NULL, &w, &h );
 	w = round(w*scale);

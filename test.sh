@@ -97,7 +97,7 @@ else
     os_linker=""
 fi
 
-cflags="$os_cflags -std=c++14 -O3 -Wall -pedantic -Iinclude -Idependencies/sdl2-include $codeset"
+cflags="-finput-charset=UTF-8 $os_cflags -std=c++14 -O3 -Wall -pedantic -Iinclude -Idependencies/sdl2-include $codeset -Wno-misleading-indentation"
 linker="$os_linker $sdl_linker $lua_linker $mix_linker"
 
 mflags='-O3 -msse -msse2' # modern amd64 optimizations

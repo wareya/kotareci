@@ -22,7 +22,7 @@ bool sys_init()
 {
     #ifndef B_DEBUG_COREFRAMES
         Maps::load_wallmask("wallmask.png");
-        Maps::load_background("background.png");
+        Maps::load_background("ず.png");
         
         Sys::myinput.Init();
         Sys::myself = new Sys::Player(Ent::New(), "Wareya");

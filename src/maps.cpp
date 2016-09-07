@@ -8,7 +8,7 @@
 #define STBI_ONLY_PNG
 #define STBI_ONLY_BMP
 #define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
+#include <stb_image_wrapper.h>
 
 #include <iostream> // debugging
 
