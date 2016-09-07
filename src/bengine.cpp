@@ -78,6 +78,7 @@ namespace Sys
     
     bool FrameLimit()
     {
+        fflush(stdout); // best place to put this
         static double lastend;
         static unsigned long long consecutive;
         static double reference_time;

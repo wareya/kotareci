@@ -9,7 +9,6 @@
         std::wstring W_Y(Y_S, L'#');
         MultiByteToWideChar(CP_UTF8, 0, X, -1, &W_X[0], X_S);
         MultiByteToWideChar(CP_UTF8, 0, Y, -1, &W_Y[0], Y_S);
-        printf("Going to open %s (%ls)\n", X, W_X.data());
         return _wfopen(W_X.data(),W_Y.data());
     }
     #define fopen wrap_fopen
